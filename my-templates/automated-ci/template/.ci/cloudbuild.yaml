@@ -1,0 +1,23 @@
+logsBucket: gs://winecombr-ci-cd-logs
+
+options:
+  env:
+    - "CI=true"
+    - "REPOSITORY=gcr.io"
+    - "PROJECT_ID=$PROJECT_ID"
+    - "COMMIT_SHA=$COMMIT_SHA"
+    - "BRANCH_NAME=$BRANCH_NAME"
+    - "SOURCE_ENV=$_SOURCE_ENV"
+
+steps:
+  - name: "gcr.io/kaniko-project/executor:v1.6.0-debug"
+    id: build_${{values.repo_name | dump}}
+    entrypoint: sh
+    args:
+      - -c
+      - "executor \
+        --destination=gcr.io/$PROJECT_ID/winecombr/$_SOURCE_ENV/${{values.repo_name | dump}}:$SHORT_SHA-$(date +%s) \
+        --destination=gcr.io/$PROJECT_ID/winecombr/$_SOURCE_ENV/${{values.repo_name | dump}}:$COMMIT_SHA \
+        --dockerfile=.ci/Dockerfile \
+        --cache=true \
+        --cache-ttl=720h"

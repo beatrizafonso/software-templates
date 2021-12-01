@@ -1,0 +1,121 @@
+apiVersion: backstage.io/v1beta2
+kind: Template
+metadata:
+  name: automated-ci
+  title: Automated CI
+  description: Create a GitHub Repository with automated CI and terraform triggers
+  tags:
+    - cicd
+    - terraform
+    - repository
+spec:
+  owner: beatrizafonso@wine.com.br
+  type: service
+  
+  parameters:
+    - title: Provide some simple information
+      required:
+        - repository_name
+        - owner
+        # - java_package_name
+      properties:
+        repo_name:
+          title: Repository Name
+          type: string
+          description: Repository name that will be created
+        environment:
+          title: Application Name
+          type: string
+          description: Application Environment. eg (production)
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: 
+              - Group
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this repository is for.
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: 
+              - Environment
+    - title: Choose a location  
+      required:
+        - repoUrl
+      properties: 
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    - id: template
+      name: Fetch files
+      action: fetch:template
+      input:
+        url: ./template
+        # copyWithoutRender:
+        #   - .github/workflows/*
+        values:
+          repo_name: '{{ parameters.repo_name }}'
+          description: '{{ parameters.description }}'
+          app_name: '{{ parameters.app_name }}'
+          owner: '{{ parameters.owner }}'
+          destination: '{{ parseRepoUrl parameters.repoUrl }}'
+          http_port: 8080
+
+    - id: fetch-trigger
+      name: Fetch Trigger
+      action: fetch:trigger
+      input:
+        url: ./trigger
+        values:
+          name: '{{parameters.repo_name}}'
+
+    - id: publish-new-repo
+      name: Publish New Git Repository
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+
+    - id: publish-pull-request
+      name: Publish Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: 'https://github.com/beatrizafonso/fluxMigration'
+        title: 'Create new trigger: {{parameters.repo_name}}'
+        branchName: 'create-trigger-{{parameters.repo-name}}'
+        description: |
+          # New trigger: {{parameters.repo-name}}
+
+          {{#if parameters.description}}
+          {{parameters.description}}
+          {{/if}}
+        targetPath: './terraform/ci-gcp/triggers/winecombr/'
+
+    # - id: fetch-docs
+    #   name: Fetch Docs
+    #   action: fetch:plain
+    #   input:
+    #     targetPath: ./community
+    #     url: https://github.com/backstage/community/tree/main/backstage-community-sessions
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: '{{ steps.publish.output.repoContentsUrl }}'
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    remoteUrl: '{{ steps.publish.output.remoteUrl }}'
+    entityRef: '{{ steps.register.output.entityRef }}'
