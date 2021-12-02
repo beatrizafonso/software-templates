@@ -88,6 +88,7 @@ spec:
       name: Publish Pull Request
       action: publish:github:pull-request
       input:
+        targetPath: 'terraform/ci-gcp/triggers/winecombr'
         sourcePath: ./trigger
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
@@ -99,7 +100,6 @@ spec:
           {{#if parameters.description}}
           {{parameters.description}}
           {{/if}}
-        targetPath: 'terraform/ci-gcp/triggers/winecombr'
 
     - id: register
       name: Register
