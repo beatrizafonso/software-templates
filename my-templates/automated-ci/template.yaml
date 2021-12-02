@@ -89,7 +89,7 @@ spec:
       action: publish:github:pull-request
       input:
         targetPath: 'terraform/ci-gcp/triggers/winecombr'
-        sourcePath: '{{ parameters.repo_name }}'
+        sourcePath: 'terraform'
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
         title: 'Create new trigger: {{parameters.repo_name}}'
