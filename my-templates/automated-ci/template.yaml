@@ -24,13 +24,13 @@ spec:
           type: string
           description: Repository name that will be created
         environment:
-          title: Application Name
+          title: Environment
           type: string
-          description: Application Environment. eg (production)
-          ui:field: OwnerPicker
-          ui:options:
-            allowedKinds: 
-              - Group
+          description: Application Environment. eg (production or staging)
+          # ui:field: OwnerPicker
+          # ui:options:
+          #   allowedKinds: 
+          #     - Environment
         description:
           title: Description
           type: string
@@ -42,7 +42,7 @@ spec:
           ui:field: OwnerPicker
           ui:options:
             allowedKinds: 
-              - Environment
+              - Group
     - title: Choose a location  
       required:
         - repoUrl
@@ -66,7 +66,7 @@ spec:
         values:
           repo_name: '{{ parameters.repo_name }}'
           description: '{{ parameters.description }}'
-          app_name: '{{ parameters.app_name }}'
+          environment: '{{ parameters.environment }}'
           owner: '{{ parameters.owner }}'
           destination: '{{ parseRepoUrl parameters.repoUrl }}'
           http_port: 8080
