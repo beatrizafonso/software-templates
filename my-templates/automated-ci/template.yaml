@@ -73,9 +73,9 @@ spec:
       input:
         url: ./trigger #github.com/beatrizafonso/software-templates/tree/main/my-templates/automated-ci/trigger
         values:
+          owner: 'beatrizafonso'
           destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
           repo_name: '{{ parameters.repo_name }}'
-          owner: 'beatrizafonso'
 
     - id: publishrepo
       name: Publish New Git Repository
