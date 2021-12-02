@@ -17,24 +17,20 @@ spec:
       required:
         - repository_name
         - owner
-        # - java_package_name
+        - Environment
       properties:
         repo_name:
-          title: Repository Name
+          title: Repository name
           type: string
           description: Repository name that will be created
-        environment:
-          title: Environment
-          type: string
-          description: Application Environment. eg (production or staging)
-          # ui:field: OwnerPicker
-          # ui:options:
-          #   allowedKinds: 
-          #     - Environment
         description:
           title: Description
           type: string
-          description: Help others understand what this repository is for.
+          description: Help others understand what this website is for.
+        environment:
+          title: Environment
+          type: string
+          description: Environment application. eg (production, staging)
         owner:
           title: Owner
           type: string
@@ -61,8 +57,6 @@ spec:
       action: fetch:template
       input:
         url: ./template
-        # copyWithoutRender:
-        #   - .github/workflows/*
         values:
           repo_name: '{{ parameters.repo_name }}'
           description: '{{ parameters.description }}'
@@ -71,9 +65,9 @@ spec:
           destination: '{{ parseRepoUrl parameters.repoUrl }}'
           http_port: 8080
 
-    - id: fetch-trigger
+    - id: trigger
       name: Fetch Trigger
-      action: fetch:trigger
+      action: fetch:template
       input:
         url: ./trigger
         values:
@@ -91,7 +85,7 @@ spec:
       name: Publish Pull Request
       action: publish:github:pull-request
       input:
-        repoUrl: 'https://github.com/beatrizafonso/fluxMigration'
+        repoUrl: 'github.com/beatrizafonso/fluxMigration'
         title: 'Create new trigger: {{parameters.repo_name}}'
         branchName: 'create-trigger-{{parameters.repo-name}}'
         description: |
@@ -113,9 +107,12 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: '{{ steps.publish.output.repoContentsUrl }}'
+        repoContentsUrl: '{{ steps.publish-new-repo.output.repoContentsUrl }}'
         catalogInfoPath: '/catalog-info.yaml'
 
   output:
-    remoteUrl: '{{ steps.publish.output.remoteUrl }}'
+    remoteUrl: '{{ steps.publish-new-repo.output.remoteUrl }}'
     entityRef: '{{ steps.register.output.entityRef }}'
+    links: 
+      - url: '{{steps.publish-pull-request.output.remoteUrl}}'
+        text: 'Go to PR'
