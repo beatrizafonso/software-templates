@@ -53,7 +53,7 @@ spec:
 
   steps:
     - id: template
-      name: Fetch files
+      name: Fetch template
       action: fetch:template
       input:
         url: ./template
@@ -62,16 +62,16 @@ spec:
           description: '{{ parameters.description }}'
           environment: '{{ parameters.environment }}'
           owner: '{{ parameters.owner }}'
-          destination: '{{ parseRepoUrl parameters.repoUrl }}'
+          destination: '{{ parseRepoUrl parameters.repoUrl }}' 
           http_port: 8080
 
-    - id: trigger
+    - id: fetch-trigger
       name: Fetch Trigger
       action: fetch:template
       input:
-        url: ./trigger
+        url: ./trigger #github.com/beatrizafonso/software-templates/tree/main/my-templates/automated-ci/trigger
         values:
-          name: '{{parameters.repo_name}}'
+          repo_name: '{{parameters.repo_name}}'
 
     - id: publishrepo
       name: Publish New Git Repository
