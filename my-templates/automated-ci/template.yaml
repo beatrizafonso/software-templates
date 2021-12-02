@@ -91,7 +91,7 @@ spec:
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
         title: 'Create new trigger: {{parameters.repo_name}}'
-        branchName: 'create-trigger-{{parameters.repo-name}}'
+        branchName: 'create-trigger-{{parameters.repo_name}}'
         description: |
           # New trigger: {{parameters.repo-name}}
 
