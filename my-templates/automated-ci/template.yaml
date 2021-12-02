@@ -54,26 +54,26 @@ spec:
 #github.com?owner=beatrizafonso&repo=my-new-repository
 
   steps:
-    - id: template
-      name: Fetch template
-      action: fetch:template
-      input:
-        url: ./template
-        values:
-          repo_name: '{{ parameters.repo_name }}'
-          description: '{{ parameters.description }}'
-          environment: '{{ parameters.environment }}'
-          owner: '{{ parameters.owner }}'
-          destination: '{{ parseRepoUrl parameters.repoUrl }}' 
-          http_port: 8080
+    # - id: template
+    #   name: Fetch template
+    #   action: fetch:template
+    #   input:
+    #     url: ./template
+    #     values:
+    #       repo_name: '{{ parameters.repo_name }}'
+    #       description: '{{ parameters.description }}'
+    #       environment: '{{ parameters.environment }}'
+    #       owner: '{{ parameters.owner }}'
+    #       destination: '{{ parseRepoUrl parameters.repoUrl }}' 
+    #       http_port: 8080
 
-    - id: publishrepo
-      name: Publish New Git Repository
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: 'This is {{ parameters.component_id }}'
-        repoUrl: '{{ parameters.repoUrl }}'
+    # - id: publishrepo
+    #   name: Publish New Git Repository
+    #   action: publish:github
+    #   input:
+    #     allowedHosts: ['github.com']
+    #     description: 'This is {{ parameters.component_id }}'
+    #     repoUrl: '{{ parameters.repoUrl }}'
 
     - id: fetch-trigger
       name: Fetch Trigger
@@ -108,16 +108,16 @@ spec:
     #     targetPath: ./community
     #     url: https://github.com/backstage/community/tree/main/backstage-community-sessions
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: '{{ steps.publishrepo.output.repoContentsUrl }}'
-        catalogInfoPath: '/catalog-info.yaml'
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: '{{ steps.publishrepo.output.repoContentsUrl }}'
+    #     catalogInfoPath: '/catalog-info.yaml'
 
   output:
-    remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
-    entityRef: '{{ steps.register.output.entityRef }}'
+    # remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
+    # entityRef: '{{ steps.register.output.entityRef }}'
     links: 
       - url: '{{steps.publish-pull-request.output.remoteUrl}}'
         text: 'Go to PR'
