@@ -73,7 +73,7 @@ spec:
     #     values:
     #       name: '{{parameters.repo_name}}'
 
-    - id: publish-new-repo
+    - id: publishrepo
       name: Publish New Git Repository
       action: publish:github
       input:
@@ -107,11 +107,11 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: '{{ steps.publish-new-repo.output.repoContentsUrl }}'
+        repoContentsUrl: '{{ steps.publishrepo.output.repoContentsUrl }}'
         catalogInfoPath: '/catalog-info.yaml'
 
   output:
-    remoteUrl: '{{ steps.publish-new-repo.output.remoteUrl }}'
+    remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
     entityRef: '{{ steps.register.output.entityRef }}'
     # links: 
     #   - url: '{{steps.publish-pull-request.output.remoteUrl}}'
