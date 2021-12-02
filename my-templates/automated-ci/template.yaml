@@ -99,7 +99,7 @@ spec:
           {{#if parameters.description}}
           {{parameters.description}}
           {{/if}}
-        targetPath: 'terraform/ci-gcp/triggers/winecombr/'
+        targetPath: '/terraform/ci-gcp/triggers/winecombr/'
 
     # - id: fetch-docs
     #   name: Fetch Docs
