@@ -85,6 +85,7 @@ spec:
       name: Publish Pull Request
       action: publish:github:pull-request
       input:
+        owner: 'beatrizafonso'
         repoUrl: 'github.com/beatrizafonso/fluxMigration'
         title: 'Create new trigger: {{parameters.repo_name}}'
         branchName: 'create-trigger-{{parameters.repo-name}}'
