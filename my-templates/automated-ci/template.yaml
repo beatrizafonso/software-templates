@@ -51,6 +51,8 @@ spec:
             allowedHosts:
               - github.com
 
+#github.com?owner=beatrizafonso&repo=my-new-repository
+
   steps:
     - id: template
       name: Fetch template
@@ -71,9 +73,9 @@ spec:
       input:
         url: ./trigger #github.com/beatrizafonso/software-templates/tree/main/my-templates/automated-ci/trigger
         values:
+          destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
           repo_name: '{{ parameters.repo_name }}'
           owner: 'beatrizafonso'
-          destination: 'github.com/beatrizafonso/fluxMigration' 
 
     - id: publishrepo
       name: Publish New Git Repository
