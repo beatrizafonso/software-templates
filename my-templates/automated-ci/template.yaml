@@ -65,13 +65,13 @@ spec:
           destination: '{{ parseRepoUrl parameters.repoUrl }}'
           http_port: 8080
 
-    # - id: trigger
-    #   name: Fetch Trigger
-    #   action: fetch:template
-    #   input:
-    #     url: ./trigger
-    #     values:
-    #       name: '{{parameters.repo_name}}'
+    - id: trigger
+      name: Fetch Trigger
+      action: fetch:template
+      input:
+        url: ./trigger
+        values:
+          name: '{{parameters.repo_name}}'
 
     - id: publishrepo
       name: Publish New Git Repository
@@ -81,20 +81,20 @@ spec:
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
 
-    # - id: publish-pull-request
-    #   name: Publish Pull Request
-    #   action: publish:github:pull-request
-    #   input:
-    #     repoUrl: 'github.com/beatrizafonso/fluxMigration'
-    #     title: 'Create new trigger: {{parameters.repo_name}}'
-    #     branchName: 'create-trigger-{{parameters.repo-name}}'
-    #     description: |
-    #       # New trigger: {{parameters.repo-name}}
+    - id: publish-pull-request
+      name: Publish Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: 'github.com/beatrizafonso/fluxMigration'
+        title: 'Create new trigger: {{parameters.repo_name}}'
+        branchName: 'create-trigger-{{parameters.repo-name}}'
+        description: |
+          # New trigger: {{parameters.repo-name}}
 
-    #       {{#if parameters.description}}
-    #       {{parameters.description}}
-    #       {{/if}}
-    #     targetPath: './terraform/ci-gcp/triggers/winecombr/'
+          {{#if parameters.description}}
+          {{parameters.description}}
+          {{/if}}
+        targetPath: './terraform/ci-gcp/triggers/winecombr/'
 
     # - id: fetch-docs
     #   name: Fetch Docs
@@ -113,6 +113,6 @@ spec:
   output:
     remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
     entityRef: '{{ steps.register.output.entityRef }}'
-    # links: 
-    #   - url: '{{steps.publish-pull-request.output.remoteUrl}}'
-    #     text: 'Go to PR'
+    links: 
+      - url: '{{steps.publish-pull-request.output.remoteUrl}}'
+        text: 'Go to PR'
