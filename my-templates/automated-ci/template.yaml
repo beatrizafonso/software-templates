@@ -28,9 +28,11 @@ spec:
           type: string
           description: Help others understand what this website is for.
         environment:
-          title: Environment
-          type: string
-          description: Environment application. eg (production, staging)
+          title: Create staging branch?
+          type: boolean #string
+          description: GitRepository with main and staging branches.
+          ui:widget: radio
+          enumNames: [ Yes, No ]
         owner:
           title: Owner
           type: string
@@ -74,6 +76,37 @@ spec:
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
 
+  # #{{ if parameters.environment.Yes }}
+  # {{ if eq parameters.environment "Yes" }}
+  #   - id: createstaging
+  #     name: Creating staging Branch
+  #     action: publish:github:pull-request
+  #     input:
+  #       sourcePath: './template'
+  #       owner: '{{ parameters.owner }}'
+  #       repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' 
+  #       title: 'Creating staging branch'
+  #       branchName: 'staging'
+  #       description: |
+  #         # Creating staging branch. 
+  #         Please close this Pull Request
+  # {{- end}}
+  # #{{ end }}
+
+    - id: createstaging
+      name: Creating staging Branch
+      action: publish:github:pull-request
+      if: {{ parameters.environment.Yes }}
+      input:
+        sourcePath: './template'
+        owner: '{{ parameters.owner }}'
+        repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' 
+        title: 'Creating staging branch'
+        branchName: 'staging'
+        description: |
+          # Creating staging branch. 
+          Please close this Pull Request
+
     - id: fetch-trigger
       name: Fetch Trigger
       action: fetch:template
@@ -84,11 +117,28 @@ spec:
           destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
           repo_name: '{{ parameters.repo_name }}'
 
-    - id: publish-pull-request
-      name: Publish Pull Request
-      action: publish:github:pull-request
+    # - id: publish-pull-request
+    #   name: Publish Pull Request
+    #   action: publish:github:pull-request
+    #   input:
+    #     targetPath: 'terraform/ci-gcp/triggers/winecombr'
+    #     sourcePath: 'terraform'
+    #     owner: 'beatrizafonso'
+    #     repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+    #     title: 'Create new trigger: {{parameters.repo_name}}'
+    #     branchName: 'create-trigger-{{parameters.repo_name}}'
+    #     description: |
+    #       # New trigger: {{parameters.repo-name}}
+
+    #       {{#if parameters.description}}
+    #       {{parameters.description}}
+    #       {{/if}}
+
+    - id: publish-pull-request-main-tf
+      name: Publish Pull Request main.tf
+      action: winecombr:github:pull-request
       input:
-        targetPath: 'terraform/ci-gcp/triggers/winecombr'
+        targetPath: 'terraform/ci-gcp'
         sourcePath: 'terraform'
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'

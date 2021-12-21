@@ -12,7 +12,7 @@ locals {
       env_name    = "staging"
     }
     production = {
-      branch_name = "^master$"
+      branch_name = "^main$"
       env_name    = "production"
     }
   }
