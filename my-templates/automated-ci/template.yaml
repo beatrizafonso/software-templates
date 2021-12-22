@@ -32,7 +32,7 @@ spec:
           type: string
           description: GitRepository with main and staging branches.
           ui:widget: radio
-          enumNames: [ Yes, No ]
+          enumNames: [ "Yes", "No" ]
         owner:
           title: Owner
           type: string
