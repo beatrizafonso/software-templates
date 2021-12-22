@@ -98,7 +98,7 @@ spec:
       action: publish:github:pull-request
       # if: {{ parameters.environment.Yes }}
       input:
-        sourcePath: './template'
+        sourcePath: 'template'
         owner: '{{ parameters.owner }}'
         repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' 
         title: 'Creating staging branch'
