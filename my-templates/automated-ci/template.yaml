@@ -17,7 +17,7 @@ spec:
       required:
         - repo_name
         - owner
-        - environment
+        #- environment
       properties:
         repo_name:
           title: Repository name
@@ -27,12 +27,12 @@ spec:
           title: Description
           type: string
           description: Help others understand what this website is for.
-        environment:
-          title: Create staging branch?
-          type: string
-          description: GitRepository with main and staging branches.
-          ui:widget: radio
-          enumNames: [ Yes, No ]
+        # environment:
+        #   title: Create staging branch?
+        #   type: string
+        #   description: GitRepository with main and staging branches.
+        #   ui:widget: radio
+        #   enumNames: [ Yes, No ]
         owner:
           title: Owner
           type: string
@@ -63,7 +63,7 @@ spec:
         values:
           repo_name: '{{ parameters.repo_name }}'
           description: '{{ parameters.description }}'
-          environment: '{{ parameters.environment }}'
+          #environment: '{{ parameters.environment }}'
           owner: '{{ parameters.owner }}'
           destination: '{{ parseRepoUrl parameters.repoUrl }}' 
           http_port: 8080
@@ -79,7 +79,6 @@ spec:
     - id: createstaging
       name: Creating staging Branch
       action: publish:github:pull-request
-      # # if: '{{ parameters.environment.Yes }}'
       input:
         owner: '{{ parameters.owner }}'
         repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' #github.com?owner={{ parameters.owner }}&repo={{parameters.repo_name}}
