@@ -68,30 +68,13 @@ spec:
           destination: '{{ parseRepoUrl parameters.repoUrl }}' 
           http_port: 8080
 
-    - id: publishrepo
-      name: Publish New Git Repository
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: 'This is {{ parameters.component_id }}'
-        repoUrl: '{{ parameters.repoUrl }}'
-
-  # #{{ if parameters.environment.Yes }}
-  # {{ if eq parameters.environment "Yes" }}
-  #   - id: createstaging
-  #     name: Creating staging Branch
-  #     action: publish:github:pull-request
-  #     input:
-  #       sourcePath: './template'
-  #       owner: '{{ parameters.owner }}'
-  #       repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' 
-  #       title: 'Creating staging branch'
-  #       branchName: 'staging'
-  #       description: |
-  #         # Creating staging branch. 
-  #         Please close this Pull Request
-  # {{- end}}
-  # #{{ end }}
+    # - id: publishrepo
+    #   name: Publish New Git Repository
+    #   action: publish:github
+    #   input:
+    #     allowedHosts: ['github.com']
+    #     description: 'This is {{ parameters.component_id }}'
+    #     repoUrl: '{{ parameters.repoUrl }}'
 
     - id: createstaging
       name: Creating staging Branch
@@ -99,7 +82,7 @@ spec:
       if: {{ parameters.environment.Yes }}
       input:
         owner: '{{ parameters.owner }}'
-        repoUrl: {{ parseRepoUrl parameters.repoUrl }}
+        repoUrl: 'github.com?owner={{ parameters.owner }}&repo={{ parameters.repo_name }}'
         title: 'Creating staging branch'
         branchName: 'staging'
         description: |
