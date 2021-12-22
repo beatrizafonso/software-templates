@@ -29,7 +29,7 @@ spec:
           description: Help others understand what this website is for.
         environment:
           title: Create staging branch?
-          type: string
+          type: boolean
           description: GitRepository with main and staging branches.
           ui:widget: radio
           enumNames: [ Yes, No ]
@@ -79,7 +79,7 @@ spec:
     - id: createstaging
       name: Creating staging Branch
       action: publish:github:pull-request
-      if: '{{ parameters.environment.Yes }}'
+      if: '{{ parameters.environment.true }}'
       input:
         owner: '{{ parameters.owner }}'
         repoUrl: '{{ parseRepoUrl parameters.repoUrl }}' #github.com?owner={{ parameters.owner }}&repo={{parameters.repo_name}}
