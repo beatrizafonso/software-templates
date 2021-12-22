@@ -81,11 +81,11 @@ spec:
       action: publish:github:pull-request
       input:
         owner: '{{ parameters.owner }}'
-        repoUrl: 'github.com?owner={{ parameters.owner }}&repo={{parameters.repo_name}}'
+        repoUrl: '{{ parameters.repoUrl }}' #'github.com?owner={{ parameters.owner }}&repo={{parameters.repo_name}}'
         title: 'Creating staging branch'
         branchName: 'staging'
         description: |
-          # Creating staging environment. 
+          # Created staging environment. 
           Please merge this Pull Request
 
     - id: fetch-trigger
