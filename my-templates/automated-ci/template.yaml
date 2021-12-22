@@ -96,7 +96,7 @@ spec:
     - id: createstaging
       name: Creating staging Branch
       action: publish:github:pull-request
-      if: {{ parameters.environment.Yes }}
+      # if: {{ parameters.environment.Yes }}
       input:
         sourcePath: './template'
         owner: '{{ parameters.owner }}'
@@ -104,8 +104,8 @@ spec:
         title: 'Creating staging branch'
         branchName: 'staging'
         description: |
-          # Creating staging branch. 
-          Please close this Pull Request
+          # Creating staging environment. 
+          Please merge this Pull Request
 
     - id: fetch-trigger
       name: Fetch Trigger
@@ -134,22 +134,22 @@ spec:
     #       {{parameters.description}}
     #       {{/if}}
 
-    - id: publish-pull-request-main-tf
-      name: Publish Pull Request main.tf
-      action: winecombr:github:pull-request
-      input:
-        targetPath: 'terraform/ci-gcp'
-        sourcePath: 'terraform'
-        owner: 'beatrizafonso'
-        repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-        title: 'Create new trigger: {{parameters.repo_name}}'
-        branchName: 'create-trigger-{{parameters.repo_name}}'
-        description: |
-          # New trigger: {{parameters.repo-name}}
+    # - id: publish-pull-request-main-tf
+    #   name: Publish Pull Request main.tf
+    #   action: winecombr:github:pull-request
+    #   input:
+    #     targetPath: 'terraform/ci-gcp'
+    #     sourcePath: 'terraform'
+    #     owner: 'beatrizafonso'
+    #     repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+    #     title: 'Create new trigger: {{parameters.repo_name}}'
+    #     branchName: 'create-trigger-{{parameters.repo_name}}'
+    #     description: |
+    #       # New trigger: {{parameters.repo-name}}
 
-          {{#if parameters.description}}
-          {{parameters.description}}
-          {{/if}}
+    #       {{#if parameters.description}}
+    #       {{parameters.description}}
+    #       {{/if}}
 
     - id: register
       name: Register
