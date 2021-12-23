@@ -81,7 +81,7 @@ spec:
       action: publish:github:pull-request
       input:
         owner: '{{ parameters.owner }}'
-        repoUrl: '{{ parameters.repoUrl }}' #'github.com?owner={{ parameters.owner }}&repo={{parameters.repo_name}}'
+        repoUrl: '{{ parameters.repoUrl }}'
         title: 'Creating staging branch'
         branchName: 'staging'
         description: |
@@ -115,22 +115,22 @@ spec:
     #       {{parameters.description}}
     #       {{/if}}
 
-    # - id: publish-pull-request-main-tf
-    #   name: Publish Pull Request main.tf
-    #   action: winecombr:github:pull-request
-    #   input:
-    #     targetPath: 'terraform/ci-gcp'
-    #     sourcePath: 'terraform'
-    #     owner: 'beatrizafonso'
-    #     repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-    #     title: 'Create new trigger: {{parameters.repo_name}}'
-    #     branchName: 'create-trigger-{{parameters.repo_name}}'
-    #     description: |
-    #       # New trigger: {{parameters.repo-name}}
+    - id: publish-pull-request-main-tf
+      name: Publish Pull Request main.tf
+      action: winecombr:github:pull-request
+      input:
+        targetPath: 'terraform/ci-gcp'
+        sourcePath: 'terraform'
+        owner: 'beatrizafonso'
+        repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+        title: 'Create new trigger: {{parameters.repo_name}}'
+        branchName: 'create-trigger-{{parameters.repo_name}}'
+        description: |
+          # New trigger: {{parameters.repo-name}}
 
-    #       {{#if parameters.description}}
-    #       {{parameters.description}}
-    #       {{/if}}
+          {{#if parameters.description}}
+          {{parameters.description}}
+          {{/if}}
 
     - id: register
       name: Register
