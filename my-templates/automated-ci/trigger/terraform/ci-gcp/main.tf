@@ -329,7 +329,3 @@ module "frete_ws" {
 module "vf_cms_loja" {
   source = "./triggers/vinhofacil/vf-cms-loja"
 }
-
-module "teste" {
-  source = "./triggers/vinhofacil/teste"
-}
