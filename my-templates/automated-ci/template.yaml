@@ -102,6 +102,7 @@ spec:
       name: Publish Pull Request main.tf
       action: winecombr:github:pull-request
       input:
+        repoName: '{{parameters.repo_name}}'
         targetPath: 'terraform/ci-gcp'
         sourcePath: 'terraform/ci-gcp'
         owner: 'beatrizafonso'
