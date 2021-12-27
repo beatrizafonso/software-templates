@@ -75,6 +75,7 @@ spec:
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
+        repoName: '{{parameters.repo_name}}'
 
     - id: createstaging
       name: Creating staging Branch
