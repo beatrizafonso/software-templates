@@ -70,13 +70,11 @@ spec:
 
     - id: publishrepo
       name: Publish New Git Repository
-      action: winecombr:publish:github
+      action: publish:github
       input:
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
-        repoName: '{{parameters.repo_name}}'
-        owner: '{{ parameters.owner }}'
 
     - id: createstaging
       name: Creating staging Branch
@@ -89,6 +87,17 @@ spec:
         description: |
           # Created staging environment. 
           Please merge this Pull Request
+
+    - id: cloneMain-tf
+      name: Clone main.tf file
+      action: winecombr:clone:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+        # repoName: '{{parameters.repo_name}}'
+        # owner: '{{ parameters.owner }}'
+        repoPath: 'terraform/ci-gcp/main.tf'
 
     - id: fetch-trigger
       name: Fetch Trigger
