@@ -94,10 +94,10 @@ spec:
       input:
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
-        repoUrl: '{{ parameters.repoUrl }}'
+        repoUrl: 'github.com?owner=beatrizafonso&repo=backstage-demo'
         # repoName: '{{parameters.repo_name}}'
         # owner: '{{ parameters.owner }}'
-        repoPath: 'terraform/ci-gcp/main.tf'
+        repoPath: 'packages/backend/src/types.ts'
 
     - id: fetch-trigger
       name: Fetch Trigger
