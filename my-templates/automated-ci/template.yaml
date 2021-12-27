@@ -70,7 +70,7 @@ spec:
 
     - id: publishrepo
       name: Publish New Git Repository
-      action: publish:github
+      action: winecombr:publish:github
       input:
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
