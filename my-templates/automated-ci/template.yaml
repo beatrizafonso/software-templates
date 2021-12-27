@@ -76,6 +76,7 @@ spec:
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
         repoName: '{{parameters.repo_name}}'
+        owner: '{{ parameters.owner }}'
 
     - id: createstaging
       name: Creating staging Branch
