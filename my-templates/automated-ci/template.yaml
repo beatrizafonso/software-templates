@@ -115,7 +115,7 @@ spec:
       input:
         repoName: '{{parameters.repo_name}}'
         targetPath: 'terraform/ci-gcp'
-        sourcePath: 'terraform/ci-gcp/main.tf'
+        sourcePath: 'terraform/ci-gcp'
         clonedRepoPath: 'terraform/ci-gcp/main.tf'
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
