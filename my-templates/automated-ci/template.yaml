@@ -69,26 +69,26 @@ spec:
           destination: '{{ parseRepoUrl parameters.repoUrl }}' 
           http_port: 8080
 
-    # - id: publishrepo
-    #   name: Publish New Git Repository
-    #   action: publish:github
-    #   input:
-    #     allowedHosts: ['github.com']
-    #     description: 'This is {{ parameters.component_id }}'
-    #     repoUrl: '{{ parameters.repoUrl }}'
+    - id: publishrepo
+      name: Publish New Git Repository
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: '{{ parameters.repoUrl }}'
 
-    # - id: createstaging
-    #   name: Creating staging Branch
-    #   action: publish:github:pull-request
-    #   input:
-    #     sourcePath: 'staging'
-    #     owner: '{{ parameters.owner }}'
-    #     repoUrl: '{{ parameters.repoUrl }}'
-    #     title: 'Creating staging branch'
-    #     branchName: 'staging'
-    #     description: |
-    #       # Created staging environment. 
-    #       Please merge this Pull Request
+    - id: createstaging
+      name: Creating staging Branch
+      action: publish:github:pull-request
+      input:
+        sourcePath: 'staging'
+        owner: '{{ parameters.owner }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+        title: 'Creating staging branch'
+        branchName: 'staging'
+        description: |
+          # Created staging environment. 
+          Please merge this Pull Request
 
     - id: cloneMain-tf
       name: Clone main.tf file
