@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.com.wine</groupId>
+    <artifactId>${{values.repoName}}</artifactId>
+    <version>1.0.0</version>
+    <name>${{values.repoName}}</name>
+    <description>${{values.projectDescription}}</description> <!--adicionar variavel : pequena descrição-->
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>${{values.javaVersion}}</java.version> <!--adicionar variavel : versao do java-->
+        <image>gcr.io/${env.PROJECT_ID}/winecombr/${env.SOURCE_ENV}/${{values.repoName}}</image>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                            <source>{java.version}</source>
+                            <target>{java.version}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>3.1.4</version>
+                    <configuration>
+                        <from>
+                            <image>gcr.io/distroless/java${java.version}-debian11</image>
+                        </from>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
+
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.1</version>
+    <configuration>
+            <source>{java.version}</source>
+            <target>{java.version}</target>
+    </configuration>
+</plugin>
+<plugin>
+    <groupId>com.google.cloud.tools</groupId>
+    <artifactId>jib-maven-plugin</artifactId>
+    <version>3.1.4</version>
+    <configuration>
+        <from>
+            <image>gcr.io/distroless/java${java.version}-debian11</image>
+        </from>
+    </configuration>
+</plugin>

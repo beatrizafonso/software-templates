@@ -1,0 +1,153 @@
+apiVersion: backstage.io/v1beta2
+kind: Template
+metadata:
+  name: java-template
+  title: Java Application
+  description: Create a GitHub Repository with automated CI and terraform triggers for Java Applications.
+  tags:
+    - cicd
+    - terraform
+    - repository
+    - java
+spec:
+  owner: devops@wine.com.br
+  type: service
+  
+  parameters:
+    - title: Provide some simple information
+      required:
+        - repo_name
+        - owner
+        - environment
+        - shortDescription
+        - javaVersion
+      properties:
+        repo_name:
+          title: Repository name
+          type: string
+          description: Repository name that will be created
+        longDescription:
+          title: Description
+          type: string
+          description: Help others understand what this website is for (long Description).
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        shortDescription:
+          title: Description
+          type: string
+          description: Help others understand what this website is for (short Description).
+        javaVersion:
+          title: Java Version
+          type: string
+          description: Java version that will be used
+          ui:widget: radio
+          enumNames: [ "11", "17" ]
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: 
+              - Group
+    - title: Choose a location  
+      required:
+        - repoUrl
+      properties: 
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    - id: template
+      name: Fetch template
+      action: fetch:template
+      input:
+        url: ./template
+        values:
+          repo_name: '{{ parameters.repo_name }}'
+          description: '{{ parameters.longDescription }}'
+          projectDescription: '{{ parameters.shortDescription }}'
+          owner: '{{ parameters.owner }}'
+          destination: '{{ parseRepoUrl parameters.repoUrl }}' 
+          http_port: 8080
+          javaVersion: '{{ parameters.javaVersion }}'
+
+    - id: publishrepo
+      name: Publish New Git Repository
+      action: publish:github
+      input:
+        sourcePath: 'main'
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+
+    - id: createstaging
+      name: Creating staging Branch
+      action: publish:github:pull-request
+      input:
+        sourcePath: 'staging'
+        owner: '{{ parameters.owner }}'
+        repoUrl: '{{ parameters.repoUrl }}'
+        title: 'Creating staging branch'
+        branchName: 'staging'
+        description: |
+          # Staging environment created. 
+          Please, close this Pull Request
+
+    - id: cloneMain-tf
+      name: Clone main.tf file
+      action: winecombr:clone:github
+      input:
+        allowedHosts: ['github.com']
+        description: 'This is {{ parameters.component_id }}'
+        repoUrl: 'github.com?owner=winecombr&repo=devops'
+        repoPath: 'terraform/ci-gcp/main.tf'
+
+    - id: fetch-trigger
+      name: Fetch Trigger
+      action: fetch:template
+      input:
+        url: ./trigger
+        values:
+          owner: 'beatrizafonso'
+          destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+          repo_name: '{{ parameters.repo_name }}'
+
+    - id: publish-pull-request-main-tf
+      name: Publish Pull Request main.tf
+      action: winecombr:github:pull-request
+      input:
+        repoName: '{{parameters.repo_name}}'
+        targetPath: 'terraform/ci-gcp'
+        sourcePath: 'terraform/ci-gcp'
+        clonedRepoPath: 'terraform/ci-gcp/main.tf'
+        owner: 'beatrizafonso'
+        repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+        title: 'Create new trigger: {{parameters.repo_name}}'
+        branchName: 'create-trigger-{{parameters.repo_name}}'
+        description: |
+          # New trigger: {{parameters.repo-name}}
+
+          {{#if parameters.shortDescription}}
+          {{parameters.shortDescription}}
+          {{/if}}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: '{{ steps.publishrepo.output.repoContentsUrl }}'
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
+    entityRef: '{{ steps.register.output.entityRef }}'
+    links: 
+      - url: '{{steps.publish-pull-request.output.remoteUrl}}'
+        text: 'Go to PR'
