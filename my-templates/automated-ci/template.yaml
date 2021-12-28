@@ -61,7 +61,6 @@ spec:
       input:
         url: ./template
         values:
-          sourcePath: 'main'
           repo_name: '{{ parameters.repo_name }}'
           description: '{{ parameters.description }}'
           #environment: '{{ parameters.environment }}'
@@ -73,6 +72,7 @@ spec:
       name: Publish New Git Repository
       action: publish:github
       input:
+        sourcePath: 'main'
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
         repoUrl: '{{ parameters.repoUrl }}'
@@ -97,8 +97,6 @@ spec:
         allowedHosts: ['github.com']
         description: 'This is {{ parameters.component_id }}'
         repoUrl: 'github.com?owner=winecombr&repo=devops'
-        # repoName: '{{parameters.repo_name}}'
-        # owner: '{{ parameters.owner }}'
         repoPath: 'terraform/ci-gcp/main.tf'
 
     - id: fetch-trigger
