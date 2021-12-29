@@ -39,10 +39,10 @@ spec:
           description: Help others understand what this website is for (short Description).
         javaVersion:
           title: Java Version
-          type: string
+          type: boolean
           description: Java version that will be used
           ui:widget: radio
-          enumNames: [ "11", "17" ]
+          enumNames: [ '11', '17' ]
         owner:
           title: Owner
           type: string
