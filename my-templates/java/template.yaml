@@ -18,7 +18,6 @@ spec:
       required:
         - repo_name
         - owner
-        - environment
         - shortDescription
         - javaVersion
       properties:
@@ -31,7 +30,7 @@ spec:
           type: string
           description: Help others understand what this website is for (long Description).
           ui:autofocus: true
-          ui:options:
+          ui:options:           ########## NAO TA FUNCIONANDO
             rows: 5
         shortDescription:
           title: Description
@@ -50,7 +49,7 @@ spec:
           ui:field: OwnerPicker
           ui:options:
             allowedKinds: 
-              - Group
+              - Group           ######## NAO TA FUNCIONANDO
     - title: Choose a location  
       required:
         - repoUrl
