@@ -112,26 +112,35 @@ spec:
       #     type: string
       #     description: Application Environment Variables
 
-
       additionalProperties:
-        envName:
-          type: string
-          title: Env Name
+        envs:
+          title: Environment Variables
+          type: object
+          required:
+            - envName
+            - envValue
+          properties:
+            envName:
+              type: string
+              title: Env Name
+            envValue:
+              type: string
+              title: Env Value
 
-        envValue:
-          type: string
-          title: Env Value
-
-
-      additionalProperties:
-        secretsName:
-          type: string
-          title: Secret Name
-
-        secretValue:
-          type: string
-          title: Secret Value
-          ui:widget: password
+        secrets:
+          title: Secrets
+          type: object
+          required:
+            - secretName
+            - secretValue
+          properties:
+            secretsName:
+              type: string
+              title: Secret Name
+            secretValue:
+              type: string
+              title: Secret Value
+              ui:widget: password
 
       #   secrets:
       #     title: Secrets
