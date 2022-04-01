@@ -96,7 +96,7 @@ spec:
           enum:
             - openjdk:15.0.1-jdk
             - openjdk:8
-            - openjdk:8-jdk
+            - openjdk:8-jdk 
             - openjdk:8u131-jdk-alpine
             - openjdk:jre-alpine3.8
         
@@ -112,6 +112,17 @@ spec:
       #     type: string
       #     description: Application Environment Variables
 
+      #   secrets:
+      #     title: Secrets
+      #     type: string
+      #     description: Application Secrets
+      #     ui:widget: password # will print '******' as value for property 'password' on Review Step
+    - title: Application properties
+      required:
+        - envName
+        - envValue
+        - envName
+        - envValue
       additionalProperties:
         envs:
           title: Environment Variables
@@ -119,6 +130,8 @@ spec:
           required:
             - envName
             - envValue
+            - secretName
+            - secretValue
           properties:
             envName:
               type: string
@@ -134,21 +147,13 @@ spec:
             - secretName
             - secretValue
           properties:
-            secretsName:
+            secretName:
               type: string
               title: Secret Name
             secretValue:
               type: string
               title: Secret Value
               ui:widget: password
-
-      #   secrets:
-      #     title: Secrets
-      #     type: string
-      #     description: Application Secrets
-      #     ui:widget: password # will print '******' as value for property 'password' on Review Step
-
-
     - title: Kubernetes
       required:
         - k8s_namespace
