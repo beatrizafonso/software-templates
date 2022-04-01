@@ -60,22 +60,27 @@ spec:
         - javaVersion
         - application_name
         - lifecycle
-        - envName
-        - envValue
+        # - envName
+        # - envValue
         - health_check
       properties:
+
+        application_name:
+          title: Application Name
+          type: string
+          description: Application Name
+          ui:field: ApplicationNamesPicker
+
         lifecycle:
           title: Lifecycle
           type: string
-          description: Lifecycle
-          default: production
+          default: staging
           enum:
             - production
             - staging
         country:
           title: Country
           type: string
-          description: Country
           default: BR
           enum:
             - BR
@@ -84,16 +89,9 @@ spec:
             - Brasil
             - Mexico
 
-        application_name:
-          title: Application Name
-          type: string
-          description: Application Name
-          ui:field: ApplicationNamesPicker
-
         javaVersion:
           title: Java Version
           type: string
-          description: Name for java runtime.
           default: openjdk:15.0.1-jdk
           enum:
             - openjdk:15.0.1-jdk
@@ -107,7 +105,7 @@ spec:
           type: string
           description: Make sure this path exists in your application.
           ui:options:
-            defaultValue: /
+            defaultValue: /       ##### NAO TA FUNCIONANDO
 
       #   env:
       #     title: Envs
@@ -115,15 +113,19 @@ spec:
       #     description: Application Environment Variables
 
 
-      # additionalProperties:
-      #   type: string
-      # properties:
-      #   envName:
-      #     type: string
-      #     title: Env Name
-      #   envValue:
-      #     type: string
-      #     title: Env Value
+      additionalProperties:
+        type: string
+      properties:
+        envName:
+          type: string
+          title: Env Name
+          ui:autofocus: true
+          ui:emptyValue: ''
+        envValue:
+          type: string
+          title: Env Value
+          ui:autofocus: true
+          ui:emptyValue: ''
 
 
       #   secrets:
