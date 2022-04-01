@@ -1,4 +1,4 @@
-apiVersion: backstage.io/v1beta2
+apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: java-template
@@ -9,39 +9,41 @@ metadata:
     - terraform
     - repository
     - java
+    - kubernetes
 spec:
-  owner: devops@wine.com.br
+  owner: beatrizafonso@wine.com.br
   type: service
   
   parameters:
-    - title: Provide some simple information
+    - title: Metadata
       required:
-        - repo_name
+        - component_id
+        - description
+        - team
+        - technical_lead
         - owner
-        - shortDescription
-        - javaVersion
       properties:
-        repo_name:
-          title: Repository name
+        component_id:
+          title: Component Name
           type: string
-          description: Repository name that will be created
-        longDescription:
-          title: Description
+          description: Unique name of the component
+
+        description:
+          title: Component Description
           type: string
-          description: Help others understand what this website is for (long Description).
-          ui:autofocus: true
-          ui:options:           ########## NAO TA FUNCIONANDO
-            rows: 5
-        shortDescription:
-          title: Description
+          description: Help others understand what this service is for.
+
+        team:
+          title: Team Name
           type: string
-          description: Help others understand what this website is for (short Description).
-        javaVersion:
-          title: Java Version
-          type: boolean
-          description: Java version that will be used
-          ui:widget: radio
-          enumNames: [ '11', '17' ]
+          description: Team Name
+          ui:field: TeamPicker
+
+        technical_lead:
+          title: Technical Leader (TL)
+          type: string
+          description: Technical Leader Name
+
         owner:
           title: Owner
           type: string
@@ -50,6 +52,177 @@ spec:
           ui:options:
             allowedKinds: 
               - Group           ######## NAO TA FUNCIONANDO
+
+
+    - title: Application
+      required:
+        - country
+        - javaVersion
+        - application_name
+        - lifecycle
+        - envName
+        - envValue
+        - health_check
+      properties:
+        lifecycle:
+          title: Lifecycle
+          type: string
+          description: Lifecycle
+          default: production
+          enum:
+            - production
+            - staging
+        country:
+          title: Country
+          type: string
+          description: Country
+          default: BR
+          enum:
+            - BR
+            - MX
+          enumNames:
+            - Brasil
+            - Mexico
+
+        application_name:
+          title: Application Name
+          type: string
+          description: Application Name
+          ui:field: ApplicationNamesPicker
+
+        javaVersion:
+          title: Java Version
+          type: string
+          description: Name for java runtime.
+          default: openjdk:15.0.1-jdk
+          enum:
+            - openjdk:15.0.1-jdk
+            - openjdk:8
+            - openjdk:8-jdk
+            - openjdk:8u131-jdk-alpine
+            - openjdk:jre-alpine3.8
+        
+        health_check:
+          title: Application Health Check path
+          type: string
+          description: Make sure this path exists in your application.
+          ui:options:
+            defaultValue: /
+
+      #   env:
+      #     title: Envs
+      #     type: string
+      #     description: Application Environment Variables
+
+
+      # additionalProperties:
+      #   type: string
+      # properties:
+      #   envName:
+      #     type: string
+      #     title: Env Name
+      #   envValue:
+      #     type: string
+      #     title: Env Value
+
+
+      #   secrets:
+      #     title: Secrets
+      #     type: string
+      #     description: Application Secrets
+      #     ui:widget: password # will print '******' as value for property 'password' on Review Step
+
+
+    - title: Kubernetes
+      required:
+        - k8s_namespace
+        - k8s_svc_port
+        - k8s_pod_replicas
+        - k8s_hpa_prod
+        - ingress
+      properties:
+        k8s_namespace:
+          title: Kubernetes Namespace
+          type: string
+          ui:field: NamespacePicker
+          ui:options:
+            defaultValue: default
+
+        k8s_svc_port:
+          title: Service Port
+          type: number
+          default: 8080
+
+        k8s_pod_replicas:
+          title: Total Replicas
+          type: number
+          default: 1
+
+        ingress:
+          title: Ingress
+          type: string
+          description: Name for java runtime.
+          default: internal-ingress
+          enum:
+            - internal-ingress
+            - external-ingress
+
+        # host:
+
+
+        k8s_hpa_prod:
+          title: Horizontal Pod AutoScaler (Production)
+          type: object
+          required:
+            - k8s_hpa_mem_au_prod
+            - k8s_hpa_cpu_au_prod
+            - k8s_hpa_min_replicas_prod
+            - k8s_hpa_max_replicas_prod
+          properties:
+            k8s_hpa_min_replicas_prod:
+              title: Min Replicas
+              type: number
+              default: 2
+            k8s_hpa_max_replicas_prod:
+              title: Max Replicas
+              type: number
+              default: 4
+            k8s_hpa_mem_au_prod:
+              title: Cpu Utilization
+              type: number
+              default: 65
+            k8s_hpa_cpu_au_prod:
+              title: Memory Utilization
+              type: number
+              default: 65
+
+
+        k8s_hpa_stg:
+          title: Horizontal Pod AutoScaler (Staging)
+          type: object
+          required:
+            - k8s_hpa_mem_au_stg
+            - k8s_hpa_cpu_au_stg
+            - k8s_hpa_min_replicas_stg
+            - k8s_hpa_max_replicas_stg
+          properties:
+            k8s_hpa_min_replicas_stg:
+              title: Min Replicas
+              type: number
+              default: 1
+            k8s_hpa_max_replicas_stg:
+              title: Max Replicas
+              type: number
+              default: 2
+            k8s_hpa_mem_au_stg:
+              title: Cpu Utilization
+              type: number
+              default: 80
+            k8s_hpa_cpu_au_stg:
+              title: Memory Utilization
+              type: number
+              default: 80
+
     - title: Choose a location  
       required:
         - repoUrl
@@ -67,32 +240,38 @@ spec:
       name: Fetch template
       action: fetch:template
       input:
-        url: ./ci
+        url: ./skeleton
         values:
-          repo_name: '{{ parameters.repo_name }}'
-          description: '{{ parameters.longDescription }}'
-          projectDescription: '{{ parameters.shortDescription }}'
-          owner: '{{ parameters.owner }}'
-          destination: '{{ parseRepoUrl parameters.repoUrl }}' 
-          http_port: 8080
-          javaVersion: '{{ parameters.javaVersion }}'
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }} 
+          javaVersion: ${{ parameters.javaVersion }}
+          country: ${{ parameters.country }}
+          application_name: ${{ parameters.application_name }}
+          k8s_pod_replicas: ${{ parameters.k8s_pod_replicas }}
+          k8s_svc_port: ${{ parameters.k8s_svc_port }}
+          k8s_namespace: ${{ parameters.k8s_namespace }}
+          repoApplicationName: ${{ getRepositoryName parameters.repoUrl }}
+          health_check: ${{ parameters.${{values.component_id | dump}} }}
 
     - id: publishrepo
       name: Publish New Git Repository
       action: publish:github
       input:
         sourcePath: 'main'
-        allowedHosts: ['github.com']
-        description: 'This is {{ parameters.component_id }}'
-        repoUrl: '{{ parameters.repoUrl }}'
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: ${{ parameters.repoUrl }}
 
     - id: createstaging
       name: Creating staging Branch
       action: publish:github:pull-request
       input:
         sourcePath: 'staging'
-        owner: '{{ parameters.owner }}'
-        repoUrl: '{{ parameters.repoUrl }}'
+        owner: ${{ parameters.owner }}
+        repoUrl: ${{ parameters.repoUrl }}
         title: 'Creating staging branch'
         branchName: 'staging'
         description: |
@@ -103,9 +282,10 @@ spec:
       name: Clone main.tf file
       action: winecombr:clone:github
       input:
-        allowedHosts: ['github.com']
-        description: 'This is {{ parameters.component_id }}'
-        repoUrl: 'github.com?owner=winecombr&repo=devops'
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.name }}
+        repoUrl: github.com?owner=winecombr&repo=devops
         repoPath: 'terraform/ci-gcp/main.tf'
 
     - id: fetch-trigger
@@ -116,37 +296,40 @@ spec:
         values:
           owner: 'beatrizafonso'
           destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-          repo_name: '{{ parameters.repo_name }}'
+          repo_name: ${{ getRepositoryName parameters.repoUrl }}
 
     - id: publish-pull-request-main-tf
       name: Publish Pull Request main.tf
       action: winecombr:github:pull-request
       input:
-        repoName: '{{parameters.repo_name}}'
+        repoName: ${{ parameters.repo_name }}
         targetPath: 'terraform/ci-gcp'
         sourcePath: 'terraform/ci-gcp'
         clonedRepoPath: 'terraform/ci-gcp/main.tf'
         owner: 'beatrizafonso'
         repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-        title: 'Create new trigger: {{parameters.repo_name}}'
-        branchName: 'create-trigger-{{parameters.repo_name}}'
+        title: 'Create new trigger: ${{ parameters.repo_name }}'
+        branchName: 'create-trigger-${{ parameters.repo_name }}'
         description: |
-          # New trigger: {{parameters.repo-name}}
+          # New trigger: ${{ parameters.repo-name }}
 
           {{#if parameters.shortDescription}}
-          {{parameters.shortDescription}}
+          ${{ parameters.shortDescription }}
           {{/if}}
 
     - id: register
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: '{{ steps.publishrepo.output.repoContentsUrl }}'
+        repoContentsUrl: ${{ steps.publishrepo.output.repoContentsUrl }}$
         catalogInfoPath: '/catalog-info.yaml'
 
   output:
-    remoteUrl: '{{ steps.publishrepo.output.remoteUrl }}'
-    entityRef: '{{ steps.register.output.entityRef }}'
-    links: 
-      - url: '{{steps.publish-pull-request.output.remoteUrl}}'
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
+      - url: ${{ steps.publish-pull-request.output.remoteUrl }}
         text: 'Go to PR'
