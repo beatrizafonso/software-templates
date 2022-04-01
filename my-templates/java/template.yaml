@@ -114,8 +114,6 @@ spec:
 
 
       additionalProperties:
-        type: string
-      properties:
         envName:
           type: string
           title: Env Name
