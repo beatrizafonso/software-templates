@@ -19,7 +19,6 @@ spec:
       required:
         - component_id
         - description
-        - team
         - technical_lead
         - owner
       properties:
@@ -33,14 +32,14 @@ spec:
           type: string
           description: Help others understand what this service is for.
 
-        team:
-          title: Team Name
-          type: string
-          description: Team Name
-          ui:field: TeamPicker
+        # team:
+        #   title: Team Name
+        #   type: string
+        #   description: Team Name
+        #   ui:field: TeamPicker
 
         technical_lead:
-          title: Technical Leader (TL)
+          title: Technical Leader
           type: string
           description: Technical Leader Name
 
@@ -69,7 +68,6 @@ spec:
           title: Application Name
           type: string
           description: Application Name
-          ui:field: ApplicationNamesPicker
 
         lifecycle:
           title: Lifecycle
@@ -123,53 +121,62 @@ spec:
       required:
         - envName
         - envValue
-        # - secretName
-        # - secretValue
-      # additionalProperties:
-      #   type: string
-      items:
+        - secretName
+        - secretValue
+      envs:
+        title: Environment Variables
         type: object
         properties:
-          # additionalItems:
           envName:
             type: string
             title: Env Name
           envValue:
             type: string
             title: Env Value
-
-    - title: Application properties
-      type: object
-      required:
-        - envName
-        - envValue
-        # - secretName
-        # - secretValue
-      # additionalProperties:
-      #   type: string
-      properties:
-        additionalItems:
+      secrets:
+        title: Secrets
+        type: object
+        properties:
           envName:
             type: string
-            title: Env Name
+            title: Secret Name
           envValue:
             type: string
-            title: Env Value
+            title: Secret Value
 
-        # secrets:
-        #   title: Secrets
-        #   type: object
-        #   required:
-        #     - secretName
-        #     - secretValue
-        #   properties:
-        #     secretName:
-        #       type: string
-        #       title: Secret Name
-        #     secretValue:
-        #       type: string
-        #       title: Secret Value
-        #       ui:widget: password
+
+    # - title: Application properties
+    #   type: object
+    #   required:
+    #     - envName
+    #     - envValue
+    #     # - secretName
+    #     # - secretValue
+    #   # additionalProperties:
+    #   #   type: string
+    #   properties:
+    #     additionalItems:
+    #       envName:
+    #         type: string
+    #         title: Env Name
+    #       envValue:
+    #         type: string
+    #         title: Env Value
+
+    #     # secrets:
+    #     #   title: Secrets
+    #     #   type: object
+    #     #   required:
+    #     #     - secretName
+    #     #     - secretValue
+    #     #   properties:
+    #     #     secretName:
+    #     #       type: string
+    #     #       title: Secret Name
+    #     #     secretValue:
+    #     #       type: string
+    #     #       title: Secret Value
+    #     #       ui:widget: password
     - title: Kubernetes
       required:
         - k8s_namespace
