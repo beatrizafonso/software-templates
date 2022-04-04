@@ -119,21 +119,42 @@ spec:
       #     ui:widget: password # will print '******' as value for property 'password' on Review Step
 
     - title: Application properties
+      type: array
+      required:
+        - envName
+        - envValue
+        # - secretName
+        # - secretValue
+      # additionalProperties:
+      #   type: string
+      items:
+        type: object
+        properties:
+          # additionalItems:
+          envName:
+            type: string
+            title: Env Name
+          envValue:
+            type: string
+            title: Env Value
+
+    - title: Application properties
       type: object
       required:
         - envName
         - envValue
         # - secretName
         # - secretValue
-      additionalProperties:
-        type: string
+      # additionalProperties:
+      #   type: string
       properties:
-        envName:
-          type: string
-          title: Env Name
-        envValue:
-          type: string
-          title: Env Value
+        additionalItems:
+          envName:
+            type: string
+            title: Env Name
+          envValue:
+            type: string
+            title: Env Value
 
         # secrets:
         #   title: Secrets
