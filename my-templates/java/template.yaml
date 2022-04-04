@@ -117,43 +117,38 @@ spec:
       #     type: string
       #     description: Application Secrets
       #     ui:widget: password # will print '******' as value for property 'password' on Review Step
+
     - title: Application properties
+      type: object
       required:
         - envName
         - envValue
-        - envName
-        - envValue
+        # - secretName
+        # - secretValue
       additionalProperties:
-        envs:
-          title: Environment Variables
-          type: object
-          required:
-            - envName
-            - envValue
-            - secretName
-            - secretValue
-          properties:
-            envName:
-              type: string
-              title: Env Name
-            envValue:
-              type: string
-              title: Env Value
+        type: string
+      properties:
+        envName:
+          type: string
+          title: Env Name
+        envValue:
+          type: string
+          title: Env Value
 
-        secrets:
-          title: Secrets
-          type: object
-          required:
-            - secretName
-            - secretValue
-          properties:
-            secretName:
-              type: string
-              title: Secret Name
-            secretValue:
-              type: string
-              title: Secret Value
-              ui:widget: password
+        # secrets:
+        #   title: Secrets
+        #   type: object
+        #   required:
+        #     - secretName
+        #     - secretValue
+        #   properties:
+        #     secretName:
+        #       type: string
+        #       title: Secret Name
+        #     secretValue:
+        #       type: string
+        #       title: Secret Value
+        #       ui:widget: password
     - title: Kubernetes
       required:
         - k8s_namespace
