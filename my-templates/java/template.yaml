@@ -144,8 +144,8 @@ spec:
         - k8s_namespace
         - k8s_svc_port
         - k8s_pod_replicas
-        - k8s_hpa_prod
-        - ingress
+        # - k8s_hpa_prod
+        # - ingress
       properties:
         k8s_namespace:
           title: Kubernetes Namespace
