@@ -131,13 +131,13 @@ spec:
           items:
             type: object
             properties:
-              envName:
+              secretName:
                 type: string
                 title: Secret Name
-              envValue:
+              secretValue:
                 type: string
                 title: Secret Value
-                ui:widget: password
+                # ui:widget: password
 
     - title: Kubernetes
       required:
@@ -150,7 +150,6 @@ spec:
         k8s_namespace:
           title: Kubernetes Namespace
           type: string
-          ui:field: NamespacePicker
           ui:options:
             defaultValue: default
 
@@ -164,67 +163,70 @@ spec:
           type: number
           default: 1
 
-        ingress:
-          title: Ingress
-          type: string
-          description: Name for java runtime.
-          default: internal-ingress
-          enum:
-            - internal-ingress
-            - external-ingress
-
-        k8s_hpa_prod:
-          title: Horizontal Pod AutoScaler (Production)
-          type: object
-          required:
-            - k8s_hpa_mem_au_prod
-            - k8s_hpa_cpu_au_prod
-            - k8s_hpa_min_replicas_prod
-            - k8s_hpa_max_replicas_prod
-          properties:
-            k8s_hpa_min_replicas_prod:
-              title: Min Replicas
-              type: number
-              default: 2
-            k8s_hpa_max_replicas_prod:
-              title: Max Replicas
-              type: number
-              default: 4
-            k8s_hpa_mem_au_prod:
-              title: Cpu Utilization
-              type: number
-              default: 65
-            k8s_hpa_cpu_au_prod:
-              title: Memory Utilization
-              type: number
-              default: 65
+        # ingress:
+        #   title: Ingress
+        #   type: string
+        #   description: Name for java runtime.
+        #   default: internal-ingress
+        #   enum:
+        #     - internal-ingress
+        #     - external-ingress
 
 
-        k8s_hpa_stg:
-          title: Horizontal Pod AutoScaler (Staging)
-          type: object
-          required:
-            - k8s_hpa_mem_au_stg
-            - k8s_hpa_cpu_au_stg
-            - k8s_hpa_min_replicas_stg
-            - k8s_hpa_max_replicas_stg
-          properties:
-            k8s_hpa_min_replicas_stg:
-              title: Min Replicas
-              type: number
-              default: 1
-            k8s_hpa_max_replicas_stg:
-              title: Max Replicas
-              type: number
-              default: 2
-            k8s_hpa_mem_au_stg:
-              title: Cpu Utilization
-              type: number
-              default: 80
-            k8s_hpa_cpu_au_stg:
-              title: Memory Utilization
-              type: number
-              default: 80
+        # Enable HPA?
+
+        # k8s_hpa_prod:
+        #   title: Horizontal Pod AutoScaler (Production)
+        #   type: object
+        #   required:
+        #     - k8s_hpa_mem_au_prod
+        #     - k8s_hpa_cpu_au_prod
+        #     - k8s_hpa_min_replicas_prod
+        #     - k8s_hpa_max_replicas_prod
+        #   properties:
+        #     k8s_hpa_min_replicas_prod:
+        #       title: Min Replicas
+        #       type: number
+        #       default: 2
+        #     k8s_hpa_max_replicas_prod:
+        #       title: Max Replicas
+        #       type: number
+        #       default: 4
+        #     k8s_hpa_mem_au_prod:
+        #       title: Cpu Utilization
+        #       type: number
+        #       default: 65
+        #     k8s_hpa_cpu_au_prod:
+        #       title: Memory Utilization
+        #       type: number
+        #       default: 65
+
+
+        # k8s_hpa_stg:
+        #   title: Horizontal Pod AutoScaler (Staging)
+        #   type: object
+        #   required:
+        #     - k8s_hpa_mem_au_stg
+        #     - k8s_hpa_cpu_au_stg
+        #     - k8s_hpa_min_replicas_stg
+        #     - k8s_hpa_max_replicas_stg
+        #   properties:
+        #     k8s_hpa_min_replicas_stg:
+        #       title: Min Replicas
+        #       type: number
+        #       default: 1
+        #     k8s_hpa_max_replicas_stg:
+        #       title: Max Replicas
+        #       type: number
+        #       default: 2
+        #     k8s_hpa_mem_au_stg:
+        #       title: Cpu Utilization
+        #       type: number
+        #       default: 80
+        #     k8s_hpa_cpu_au_stg:
+        #       title: Memory Utilization
+        #       type: number
+        #       default: 80
 
     - title: Choose a location  
       required:

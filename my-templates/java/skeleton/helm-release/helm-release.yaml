@@ -36,24 +36,25 @@ spec:
 
   {%- if values.envs %}
     env:
-    {% for item in values.envs }
-      {{ item.envName }}: {{ item.envValue }}
-    {% endfor %}
+    {{ values.envs }}
+    # {% for item in values.envs }
+    #   {{ item.envName }}: {{ item.envValue }}
+    # {% endfor %}
   {% else %}
     env: {}
   {%- endif %}
 
 
 
-  {%- if values.secrets %}
-    secrets:
-      ${{values.component_id | dump}}-secret:
-      {% for secret in values.secrets }
-        {{ item.secretName }}: {{ item.secretName }}
-      {% endfor %}
-  {% else %}
-    secrets: {}
-  {%- endif %}
+  # {%- if values.secrets %}
+  #   secrets:
+  #     ${{values.component_id | dump}}-secret:
+  #     {% for secret in values.secrets }
+  #       {{ item.secretName }}: {{ item.secretName }}
+  #     {% endfor %}
+  # {% else %}
+  #   secrets: {}
+  # {%- endif %}
 
     #########
     ## SCHEDULING
