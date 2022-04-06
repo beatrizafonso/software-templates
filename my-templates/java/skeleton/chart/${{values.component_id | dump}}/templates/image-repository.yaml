@@ -1,0 +1,12 @@
+{{- if .Values.imageAutomation.enabled -}}
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: {{ include "helpers.fullname" . }}
+  namespace: flux-system
+spec:
+  image: {{ .Values.imageAutomation.imageRepo }}
+  interval: 1m0s
+  secretRef:
+    name: ci-cd-registry
+{{- end }}

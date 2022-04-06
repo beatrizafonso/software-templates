@@ -1,0 +1,194 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ${{values.component_id | dump}}
+  namespace: ${{values.k8s_namespace | dump}}
+  labels:
+    github/repo: "${{values.destination.repo | dump}}"
+spec:
+  maxHistory: 30
+  interval: 5m
+  releaseName: ${{values.component_id | dump}}
+  targetNamespace: ${{values.k8s_namespace | dump}}
+  chart:
+    spec:
+      chart: ${{values.component_id | dump}}
+      version: 0.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: devops-charts
+        namespace: flux-system
+      interval: 1m
+  values:
+    nameOverride: "${{values.component_id | dump}}"
+    fullnameOverride: "${{values.component_id | dump}}"
+    image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}:version # {"$imagepolicy": "flux-system:${{values.component_id | dump}}"}
+    imagePullSecrets:
+      - name: "ci-cd-registry"
+      - name: "docker-registry"
+    deployLabels:
+      github/repo: "${{values.destination.repo | dump}}"
+      'backstage.io/kubernetes-id': ${{values.component_id | dump}}
+    imageAutomation:
+      enabled: true
+      imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
+
+
+  {%- if values.envs %}
+    env:
+    {% for item in values.envs }
+      {{ item.envName }}: {{ item.envValue }}
+    {% endfor %}
+  {% else %}
+    env: {}
+  {%- endif %}
+
+
+
+  {%- if values.secrets %}
+    secrets:
+      ${{values.component_id | dump}}-secret:
+      {% for secret in values.secrets }
+        {{ item.secretName }}: {{ item.secretName }}
+      {% endfor %}
+  {% else %}
+    secrets: {}
+  {%- endif %}
+
+    #########
+    ## SCHEDULING
+    ######
+    resources:
+      limits:
+        cpu: '1'
+        memory: 2Gi
+      requests:
+        cpu: 100m
+        memory: 2Gi
+
+    tolerations:
+      - key: "preemptible"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+    nodeAffinity: {}
+    #  preferredDuringSchedulingIgnoredDuringExecution:
+    #  - weight: 10
+    #    nodeSelectorTerms:
+    #    - matchExpressions:
+    #      - key: preemptible
+    #        operator: In
+    #        values:
+    #        - "true"
+
+    podAnnotations: {}
+    # prometheus.io/scrape: "true"
+    # prometheus.io/port: "3333"
+    # prometheus.io/path: "/metrics"
+
+    serviceAccount:
+      enabled: false
+
+    #########
+    ## DATABASES
+    ######
+
+  # {%- if values.database := "postgresql" %}
+  #   postgresql:
+  #     enabled: true
+  #     fullnameOverride: "we-extensions-postgresql"
+  #     image:
+  #       registry: docker.io
+  #       repository: bitnami/postgresql
+  #       tag: 11.14.0-debian-10-r17
+  #       pullPolicy: IfNotPresent
+  #       pullSecrets:
+  #         - name: "ci-cd-registry"
+  #         - name: "docker-registry"
+  #       debug: false
+  #     postgresqlUsername: "postgres"
+  #     existingSecret: "we-extensions-postgres-auth"
+  #     postgresqlDatabase: "we_ct_db"
+  #     persistence:
+  #       size: 8Gi
+  #     primary:
+  #       tolerations:
+  #         - key: "preemptible"
+  #           operator: "Equal"
+  #           value: "true"
+  #           effect: "NoSchedule"
+  #     resources:
+  #       requests:
+  #         memory: 256Mi
+  #         cpu: 250m
+  #       limits:
+  #         memory: 256Mi
+  #         cpu: 250m
+  # {%- endif %}
+
+    #########
+    ## MONITORING
+    ######
+    livenessProbe:
+      path: "${{values.health_check | dump}}"
+      successThreshold: 1
+      failureThreshold: 3
+      periodSeconds: 10
+      timeoutSeconds: 10
+      initialDelaySeconds: 60
+    readinessProbe:
+      path: "${{values.health_check | dump}}"
+      successThreshold: 1
+      failureThreshold: 3
+      periodSeconds: 10
+      timeoutSeconds: 10
+      initialDelaySeconds: 60
+    #########
+    ## CONNECTIVITY
+    ######
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: ${{ values.k8s_svc_port | dump }}
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: "external-ingress"
+        # ingress.kubernetes.io/whitelist-source-range: 189.23.221.102/32
+      hosts:
+        - ${{ values.k8s_ingress_host | dump }}
+        # - example.org
+      paths:
+        '/': {}
+        # '/other': {}
+      tls: []
+      # - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
+    #########
+    ## SCALING / ROLLOUT
+    ######
+    replicaCount: ${{ values.k8s_pod_replicas }}
+    hpa:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      targetCpu: 70
+      # custom:
+      #   - type: Object
+      #     object:
+      #       metric:
+      #         name: metric_name
+      #       describedObject:
+      #         kind: Deployment
+      #         name: deployment_name
+      #         apiVersion: /v1
+      #       target:
+      #         type: Value
+      #         value: 200
+    pdb:
+      maxUnavailable: 1
+      # minAvailable: 1
+    rollingUpdate:
+      maxSurge: 1

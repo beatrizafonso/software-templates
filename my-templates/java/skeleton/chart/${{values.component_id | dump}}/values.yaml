@@ -1,0 +1,154 @@
+nameOverride: ""
+fullnameOverride: ""
+
+#########
+## APLICATION
+######
+
+image:
+imagePullPolicy: IfNotPresent
+imagePullSecrets: []
+imageAutomation:
+  enabled: false
+  imageRepo: ""
+
+env: {}
+  # key: value
+  # TYPEORM_NAME: ""
+  # TYPEORM_CONNECTION: ""
+  # TYPEORM_HOST: ""
+  # TYPEORM_PORT: ""
+  # TYPEORM_DATABASE: ""
+
+overrideConfigFile: 
+  enabled: false
+  configFile: ""
+
+secrets: {}
+#  secretName:
+#    secretKey: <Env var name>
+#
+#  we-extensions-postgres-auth:
+#    username: TYPEORM_USERNAME
+#    password: TYPEORM_PASSWORD
+
+#########
+## SCHEDULING
+######
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+tolerations: []
+  # - key: "preemptible"
+  #   operator: "Equal"
+  #   value: "true"
+  #   effect: "NoSchedule"
+
+nodeAffinity: {}
+  #  preferredDuringSchedulingIgnoredDuringExecution:
+  #  - weight: 10
+  #    nodeSelectorTerms:
+  #    - matchExpressions:
+  #      - key: preemptible
+  #        operator: In
+  #        values:
+  #        - "true"
+
+podAnnotations: {}
+  # prometheus.io/scrape: "true"
+  # prometheus.io/port: "3333"
+  # prometheus.io/path: "/metrics"
+
+serviceAccount:
+  enabled: false
+  name: ""
+
+#########
+## DATABASES
+######
+postgresql:
+  enabled: false
+
+#########
+## MONITORING
+######
+
+livenessProbe:
+  path: "/health/check"
+  successThreshold: 1
+  failureThreshold: 3
+  periodSeconds: 10
+  timeoutSeconds: 10
+  initialDelaySeconds: 20
+
+readinessProbe:
+  path: "/health/check"
+  successThreshold: 1
+  failureThreshold: 3
+  periodSeconds: 10
+  timeoutSeconds: 10
+  initialDelaySeconds: 20
+
+#########
+## CONNECTIVITY
+######
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: external-nginx
+    # ingress.kubernetes.io/whitelist-source-range: 189.23.221.102/32
+  hosts: []
+    # - example.com.br
+    # - example.org
+
+  paths:
+    '/': {}
+    # '/other': {}
+
+  tls: []
+  # - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+#########
+## SCALING / ROLLOUT
+######
+
+replicaCount: 1
+
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCpu: 70
+  # custom:
+  #   - type: Object
+  #     object:
+  #       metric:
+  #         name: metric_name
+  #       describedObject:
+  #         kind: Deployment
+  #         name: deployment_name
+  #         apiVersion: /v1
+  #       target:
+  #         type: Value
+  #         value: 200
+
+pdb:
+  maxUnavailable: 1
+  # minAvailable: 1
+
+rollingUpdate:
+  maxSurge: 1

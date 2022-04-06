@@ -1,0 +1,16 @@
+{{- if .Values.imageAutomation.enabled -}}
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "helpers.fullname" . }}
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: {{ include "helpers.fullname" . }}
+  filterTags:
+    pattern: '[a-fA-F0-9]+-(?P<ts>.*)'
+    extract: '$ts'
+  policy:
+    numerical:
+      order: asc
+{{- end }}

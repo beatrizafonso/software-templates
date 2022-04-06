@@ -59,8 +59,6 @@ spec:
         - javaVersion
         - application_name
         - lifecycle
-        # - envName
-        # - envValue
         - health_check
       properties:
 
@@ -105,78 +103,42 @@ spec:
           ui:options:
             defaultValue: /       ##### NAO TA FUNCIONANDO
 
-      #   env:
-      #     title: Envs
-      #     type: string
-      #     description: Application Environment Variables
-
-      #   secrets:
-      #     title: Secrets
-      #     type: string
-      #     description: Application Secrets
-      #     ui:widget: password # will print '******' as value for property 'password' on Review Step
-
-    - title: Application properties
-      type: array
-      required:
-        - envName
-        - envValue
-        - secretName
-        - secretValue
-      envs:
-        title: Environment Variables
-        type: object
-        properties:
-          envName:
-            type: string
-            title: Env Name
-          envValue:
-            type: string
-            title: Env Value
-      secrets:
-        title: Secrets
-        type: object
-        properties:
-          envName:
-            type: string
-            title: Secret Name
-          envValue:
-            type: string
-            title: Secret Value
+        envs:
+          title: Environment Variables
+          description: Application Environment Variables
+          type: array
+          required:
+            - envName
+            - envValue
+          items:
+            type: object
+            properties:
+              envName:
+                type: string
+                title: Env Name
+              envValue:
+                type: string
+                title: Env Value
 
 
-    # - title: Application properties
-    #   type: object
-    #   required:
-    #     - envName
-    #     - envValue
-    #     # - secretName
-    #     # - secretValue
-    #   # additionalProperties:
-    #   #   type: string
-    #   properties:
-    #     additionalItems:
-    #       envName:
-    #         type: string
-    #         title: Env Name
-    #       envValue:
-    #         type: string
-    #         title: Env Value
+        secrets:
+          title: Secrets
+          description: Application Secrets
+          type: array
+          required:
+            - secretName
+            - secretValue
+          items:
+            type: object
+            properties:
+              envName:
+                type: string
+                title: Secret Name
+              envValue:
+                type: string
+                title: Secret Value
+                ui:widget: password
 
-    #     # secrets:
-    #     #   title: Secrets
-    #     #   type: object
-    #     #   required:
-    #     #     - secretName
-    #     #     - secretValue
-    #     #   properties:
-    #     #     secretName:
-    #     #       type: string
-    #     #       title: Secret Name
-    #     #     secretValue:
-    #     #       type: string
-    #     #       title: Secret Value
-    #     #       ui:widget: password
     - title: Kubernetes
       required:
         - k8s_namespace
@@ -210,9 +172,6 @@ spec:
           enum:
             - internal-ingress
             - external-ingress
-
-        # host:
-
 
         k8s_hpa_prod:
           title: Horizontal Pod AutoScaler (Production)
@@ -297,7 +256,9 @@ spec:
           k8s_svc_port: ${{ parameters.k8s_svc_port }}
           k8s_namespace: ${{ parameters.k8s_namespace }}
           repoApplicationName: ${{ getRepositoryName parameters.repoUrl }}
-          health_check: ${{ parameters.${{values.component_id | dump}} }}
+          health_check: ${{ parameters.health_check }}
+          envs: ${{ parameters.envs }}
+          secrets: ${{ parameters.secrets }}
 
     - id: publishrepo
       name: Publish New Git Repository

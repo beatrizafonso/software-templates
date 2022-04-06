@@ -1,13 +1,10 @@
-## Builds wine-search-products-indexer and wine-search-products-search-engine
-## Requires the following variable to be set:
-##   - _SOURCE_ENV: the name of the enviroment, e.g: staging, production ...
-##   - _PROJECTS: name of the projects that should be built (dependencies are built automatically).
 logsBucket: gs://winecombr-ci-cd-logs
 
 substitutions:
   ## The bucket must be created manually
   _CACHE_BUCKET: winecombr-ci-cd-cache
   _MAVEN_IMAGE: maven:3.6.3-openjdk-${{values.javaVersion}}
+
 
 options:
   env:
