@@ -259,7 +259,8 @@ spec:
           k8s_namespace: ${{ parameters.k8s_namespace }}
           repoApplicationName: ${{ getRepositoryName parameters.repoUrl }}
           health_check: ${{ parameters.health_check }}
-          envs: ${{ parameters.envs }}
+          envName: ${{ parameters.envs.envName }}
+          envValue: ${{ parameters.envs.envValue }}
           secrets: ${{ parameters.secrets }}
 
     - id: publishrepo
