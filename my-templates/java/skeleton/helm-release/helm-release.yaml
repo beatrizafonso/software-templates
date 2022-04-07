@@ -40,11 +40,7 @@ spec:
 
     env:
       "${{values.envs | dump}}"
-    # env:
-    # {{ values.envs }}
-    # {% for item in values.envs }
-    #   {{ item.envName }}: {{ item.envValue }}
-    # {% endfor %}
+
 
   {% else %}
     env: {}
@@ -52,15 +48,6 @@ spec:
 
 
 
-  # {%- if values.secrets %}
-  #   secrets:
-  #     ${{values.component_id | dump}}-secret:
-  #     {% for secret in values.secrets }
-  #       {{ item.secretName }}: {{ item.secretName }}
-  #     {% endfor %}
-  # {% else %}
-  #   secrets: {}
-  # {%- endif %}
 
     #########
     ## SCHEDULING
@@ -101,7 +88,7 @@ spec:
     ## DATABASES
     ######
 
-  # {%- if values.database := "postgresql" %}
+  # 
   #   postgresql:
   #     enabled: true
   #     fullnameOverride: "we-extensions-postgresql"
@@ -132,7 +119,7 @@ spec:
   #       limits:
   #         memory: 256Mi
   #         cpu: 250m
-  # {%- endif %}
+  #
 
     #########
     ## MONITORING
