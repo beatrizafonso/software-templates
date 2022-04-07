@@ -33,13 +33,19 @@ spec:
       enabled: true
       imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
 
+    env:
+      "${{values.envs | dump}}"
 
   {%- if values.envs %}
+
     env:
-    {{ values.envs }}
+      "${{values.envs | dump}}"
+    # env:
+    # {{ values.envs }}
     # {% for item in values.envs }
     #   {{ item.envName }}: {{ item.envValue }}
     # {% endfor %}
+
   {% else %}
     env: {}
   {%- endif %}
