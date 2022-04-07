@@ -38,12 +38,15 @@ spec:
 
   {%- if values.envs %}
     env:
-  {% for envName, envValue in values.envs %}
-    ${{ envName | dump}}: ${{ envValue | dump}}
+  {% for item in values.envs %}
+  {% for varName, varValue in item | groupby("varValue") %}
+    ${{ varValue | dump}}: 
+    {% for item in varValue %}
+      ${{ varValue | dump }}
+    {% endfor %}
   {% endfor %}
 
-  {% for item in values.envs %}
-   $${{ item | dump}}
+   ${{ item | dump}}
   {% endfor %}
 
   {% else %}
