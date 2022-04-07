@@ -39,14 +39,9 @@ spec:
   {%- if values.envs %}
     env:
   {% for item in values.envs %}
-  {% for varName, varValue in item | groupby("varValue") %}
-    ${{ varValue | dump}}: 
-    {% for item in varValue %}
-      ${{ varValue | dump }}
-    {% endfor %}
-  {% endfor %}
 
-   ${{ item | dump}}
+  ${{ item[1] | dump}}
+  
   {% endfor %}
 
   {% else %}
