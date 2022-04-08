@@ -48,14 +48,24 @@ spec:
   {%- endif %}
 
 
+  {% for item in values.envs %}
+  {% for varName, varValue in item | groupby("varValue") %}
+      ${{ varName | dump}}
+      ${{ varValue | dump}}
+      ${{ varValue | dump}}:
+      {% for item2 in varValue %}
+          ${{ item2[1] |dump}}
+      {% endfor %}
+  {% endfor %}  
+  {% endfor %}
 
 
-{% for varName, varValue in values.envs | groupby("varName") %}
-    <b>${{ varName }}</b> :
+  {% for varName, varValue in values.envs | groupby("varName") %}
+    <b>${{ varName | dump}}</b> :
     {% for item in varValue %}
-        ${{ item[1] }}
+        ${{ item[1] | dump}}
     {% endfor %}<br>
-{% endfor %}  
+  {% endfor %}  
 
 
     #########
