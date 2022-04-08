@@ -33,34 +33,15 @@ spec:
       enabled: true
       imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
 
-    env:
-      "${{values.envs | dump}}"
-
   {%- if values.envs %}
     env:
-  {% for varName, varValue in values.envs %}
-
-  ${{ varValue | dump}}: ${{ envValue | dump}}
-
-  {% endfor %}
+    {% for item in values.envs %}
+      ${{ item["varName"] }}: ${{ item["varValue"] }}
+    {% endfor %}
   {% else %}
     env: {}
   {%- endif %}
 
-
-  {% for item in values.envs %}
-    ${{ item | dump}}
-    ${{ item[0] }}
-    ${{ item[1] }}
-  {% for varName, varValue in item | groupby("varValue") %}
-      ${{ varValue }}: 
-  {% endfor %}
-  {% endfor %}
-
-  {% for varName, varValue in values.envs %}
-      ${{ varName | dump }}
-      ${{ varValue | dump }}  
-  {% endfor %}
 
     #########
     ## SCHEDULING
