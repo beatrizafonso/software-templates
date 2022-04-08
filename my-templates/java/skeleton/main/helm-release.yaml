@@ -36,7 +36,19 @@ spec:
   {%- if values.envs %}
     env:
     {% for item in values.envs %}
-      ${{ item["varName"] }}: ${{ item["varValue"] }}
+      ${{ item | dump}}
+      ${{ item["envName"] | dump}}: ${{ item["envValue"] | dump}}
+    {% endfor %}
+  {% else %}
+    env: {}
+  {%- endif %}
+
+
+  {%- if values.envs %}
+    env:
+    {% for item in values.envs %}
+      ${{ item }}
+      ${{ item["envName"] }}: ${{ item["envValue"] }}
     {% endfor %}
   {% else %}
     env: {}
