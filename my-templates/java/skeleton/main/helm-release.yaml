@@ -34,7 +34,7 @@ spec:
       imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
 
     env:
-      "${{values.envs | dump}}"
+      "${{values.envName | dump}}"
 
   {%- if values.envName %}
     env:
