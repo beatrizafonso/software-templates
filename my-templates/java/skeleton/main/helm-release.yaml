@@ -34,21 +34,28 @@ spec:
       imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
 
     env:
-      "${{values.envName | dump}}"
+      "${{values.envs | dump}}"
 
-  {%- if values.envName %}
+  {%- if values.envs %}
     env:
-  {% for envName in values.envName %}
-  {% for envValue in values.envValue %}
+  {% for varName, varValue in values.envs %}
 
-  ${{ envName | dump}}: ${{ envValue | dump}}
+  ${{ varValue | dump}}: ${{ envValue | dump}}
 
   {% endfor %}
-  {% endfor %}
-
   {% else %}
     env: {}
   {%- endif %}
+
+
+
+
+{% for varName, varValue in values.envs | groupby("varName") %}
+    <b>${{ varName }}</b> :
+    {% for item in varValue %}
+        ${{ item[1] }}
+    {% endfor %}<br>
+{% endfor %}  
 
 
     #########
