@@ -50,12 +50,18 @@ spec:
 
   {% for item in values.envs %}
     ${{ item | dump}}
-  {% for varName, varValue in item %}
-      ${{ varName | dump}}
-      ${{ varValue | dump}}
+    ${{ item[0] }}
+    ${{ item[1] }}
+  {% for varName, varValue in item | groupby("varValue") %}
+      ${{ varValue }}: 
   {% endfor %}
   {% endfor %}
-  
+
+  {% for varName, varValue in values.envs %}
+      ${{ varName | dump }}
+      ${{ varValue | dump }}  
+  {% endfor %}
+
     #########
     ## SCHEDULING
     ######
