@@ -265,10 +265,6 @@ spec:
         enablePostgresql:
           title: Enable PostgreSQL?
           type: boolean
-          - title: Enable
-            const: true
-          - title: Disable
-            const: false
           default: false
           # dependencies:
           #   enablePostgres:
