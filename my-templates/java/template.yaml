@@ -207,57 +207,57 @@ spec:
                 - 'Yes: One'
                 - 'Yes: More than one'
               default: "no"
-          required:
-          - ingress_conditional
-          dependencies:
-            ingress_conditional:
-              oneOf:
-              - properties:
-                  ingress_conditional:
-                    enum:
-                    - "no"
-              - properties:
-                required:
-                - k8s_ingress_host
-                - k8s_ingress_class
-                  ingress_conditional:
-                    enum:
-                    - "one"
-                  k8s_ingress_host:
-                    title: Host URL
-                    type: string
-                    description: "Subdomain only. Example: <subdomain>.wine.bom.br"
-                    customFormats: [a-zA-Z-0-9]
-                    default: ${{ parameters.component_id }}
-                  k8s_ingress_class:
-                    title: Host URL
-                    type: string
-                    enum:
-                      - internal-ingress
-                      - external-ingress
-                    default: internal-ingress
-              - properties:
-                required:
-                - k8s_ingress_host
-                - k8s_ingress_class
-                  ingress_conditional:
-                    enum:
-                    - "mutiple"
-                  k8s_ingress_host:
-                    title: Host URL
-                    type: array
-                    customFormats: [a-zA-Z-0-9]
-                    items:
-                      type: string
-                      description: "Subdomain only. Example: <subdomain>.wine.bom.br"
-                    default: ${{ parameters.component_id }}
-                  k8s_ingress_class:
-                    title: Host URL
-                    type: string
-                    enum:
-                      - internal-ingress
-                      - external-ingress
-                    default: internal-ingress
+          # required:
+          # - ingress_conditional
+          # dependencies:
+          #   ingress_conditional:
+          #     oneOf:
+          #     - properties:
+          #         ingress_conditional:
+          #           enum:
+          #           - "no"
+          #     - properties:
+          #       required:
+          #       - k8s_ingress_host
+          #       - k8s_ingress_class
+          #         ingress_conditional:
+          #           enum:
+          #           - "one"
+          #         k8s_ingress_host:
+          #           title: Host URL
+          #           type: string
+          #           description: "Subdomain only. Example: <subdomain>.wine.bom.br"
+          #           customFormats: [a-zA-Z-0-9]
+          #           default: ${{ parameters.component_id }}
+          #         k8s_ingress_class:
+          #           title: Host URL
+          #           type: string
+          #           enum:
+          #             - internal-ingress
+          #             - external-ingress
+          #           default: internal-ingress
+          #     - properties:
+          #       required:
+          #       - k8s_ingress_host
+          #       - k8s_ingress_class
+          #         ingress_conditional:
+          #           enum:
+          #           - "mutiple"
+          #         k8s_ingress_host:
+          #           title: Host URL
+          #           type: array
+          #           customFormats: [a-zA-Z-0-9]
+          #           items:
+          #             type: string
+          #             description: "Subdomain only. Example: <subdomain>.wine.bom.br"
+          #           default: ${{ parameters.component_id }}
+          #         k8s_ingress_class:
+          #           title: Host URL
+          #           type: string
+          #           enum:
+          #             - internal-ingress
+          #             - external-ingress
+          #           default: internal-ingress
 
     # - title: Dependencies
     #   required:
