@@ -218,8 +218,8 @@ spec:
                     - "no"
               - properties:
                 required: 
-                  - k8s_ingress_host
-                  - k8s_ingress_class
+                - k8s_ingress_host
+                - k8s_ingress_class
                   ingress_conditional:
                     enum:
                     - "one"
