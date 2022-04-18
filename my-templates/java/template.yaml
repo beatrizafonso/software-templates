@@ -270,48 +270,46 @@ spec:
           - title: Disable
             const: false
           default: false
-          required:
-          - enablePostgresql
-          dependencies:
-            enablePostgres:
-              oneOf:
-              - properties:
-                  enablePostgresql:
-                    enum:
-                    - false
-              - properties:
-                  enablePostgresql:
-                    enum:
-                    - true
-                  postgresql_version:
-                    title: PostgreSQL Version
-                    type: string
-                    enum:
-                      - 11.14.0-debian-10-r17
-                      - 14.2.0-debian-10-r58
-                    enumNames:
-                      - "11.14.0-debian-10-r17"
-                      - "14.2.0-debian-10-r58"
-                    default: 14.2.0-debian-10-r58
+          # dependencies:
+          #   enablePostgres:
+          #     oneOf:
+          #     - properties:
+          #         enablePostgresql:
+          #           enum:
+          #           - false
+          #     - properties:
+          #         enablePostgresql:
+          #           enum:
+          #           - true
+          #         postgresql_version:
+          #           title: PostgreSQL Version
+          #           type: string
+          #           enum:
+          #             - 11.14.0-debian-10-r17
+          #             - 14.2.0-debian-10-r58
+          #           enumNames:
+          #             - "11.14.0-debian-10-r17"
+          #             - "14.2.0-debian-10-r58"
+          #           default: 14.2.0-debian-10-r58
 
-                  postgresqlPersistenceSize:
-                    title: PostgreSQL persistence Size
-                    type: number
-                    enum:
-                      - 8Gi
-                      - 16Gi
-                      - 24Gi
-                      - 32Gi
-                    default: 8Gi
+          #         postgresqlPersistenceSize:
+          #           title: PostgreSQL persistence Size
+          #           type: number
+          #           enum:
+          #             - 8Gi
+          #             - 16Gi
+          #             - 24Gi
+          #             - 32Gi
+          #           default: 8Gi
 
-                  enablePostgresqlUser:
-                    title: Enable Postgres user?
-                    type: boolean
-                    - title: Enable
-                      const: true
-                    - title: Disable
-                      const: false
-                    default: true
+          #         enablePostgresqlUser:
+          #           title: Enable Postgres user?
+          #           type: boolean
+          #           - title: Enable
+          #             const: true
+          #           - title: Disable
+          #             const: false
+          #           default: true
             
                     # dependencies:
                     #   enablePostgresqlUser:
@@ -330,10 +328,12 @@ spec:
                     #           description: secret to use for PostgreSQL credentials 
                     #       required:
                     #       - postgresSecret
-                required:
-                - enablePostgresqlUser
-                - postgresql_version
-                - postgresqlPersistenceSize
+                # required:
+                # - enablePostgresqlUser
+                # - postgresql_version
+                # - postgresqlPersistenceSize
+
+
     #     enableRedis:
     #       title: Enable Redis?
     #       type: boolean
