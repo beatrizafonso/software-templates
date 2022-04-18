@@ -226,7 +226,7 @@ spec:
                     description: "Subdomain only. Example: <subdomain>.wine.bom.br"
                     customFormats: [a-zA-Z-0-9]
                   k8s_ingress_class:
-                    title: Host URL
+                    title: Ingress Class
                     type: string
                     enum:
                       - internal-ingress
@@ -235,27 +235,27 @@ spec:
                 required: 
                 - k8s_ingress_host
                 - k8s_ingress_class
-              # - properties:
-              #   required:
-              #     - k8s_ingress_host
-              #     - k8s_ingress_class
-              #     ingress_conditional:
-              #       enum:
-              #       - "mutiple"
-              #     k8s_ingress_host:
-              #       title: Host URL
-              #       type: array
-              #       customFormats: [a-zA-Z-0-9]
-              #       items:
-              #         type: string
-              #         description: "Subdomain only. Example: <subdomain>.wine.bom.br"
-              #     k8s_ingress_class:
-              #       title: Host URL
-              #       type: string
-              #       enum:
-              #         - internal-ingress
-              #         - external-ingress
-              #       default: internal-ingress
+              - properties:
+                  ingress_conditional:
+                    enum:
+                    - "mutiple"
+                  k8s_ingress_host:
+                    title: Host URL
+                    type: array
+                    customFormats: [a-zA-Z-0-9]
+                    items:
+                      type: string
+                      description: "Subdomain only. Example: <subdomain>.wine.bom.br"
+                  k8s_ingress_class:
+                    title: Host URL
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+                required:
+                - k8s_ingress_host
+                - k8s_ingress_class
 
     # - title: Dependencies
     #   required:
