@@ -217,9 +217,9 @@ spec:
                     enum:
                     - "no"
               - properties:
-                # required: 
-                #   - k8s_ingress_host
-                #   - k8s_ingress_class
+                required: 
+                  - k8s_ingress_host
+                  - k8s_ingress_class
                   ingress_conditional:
                     enum:
                     - "one"
