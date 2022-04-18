@@ -217,9 +217,6 @@ spec:
                     enum:
                     - "no"
               - properties:
-                required: 
-                - k8s_ingress_host
-                - k8s_ingress_class
                   ingress_conditional:
                     enum:
                     - "one"
@@ -228,13 +225,16 @@ spec:
                     type: string
                     description: "Subdomain only. Example: <subdomain>.wine.bom.br"
                     customFormats: [a-zA-Z-0-9]
-                  # k8s_ingress_class:
-                  #   title: Host URL
-                  #   type: string
-                  #   enum:
-                  #     - internal-ingress
-                  #     - external-ingress
-                  #   default: internal-ingress
+                  k8s_ingress_class:
+                    title: Host URL
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+                required: 
+                - k8s_ingress_host
+                - k8s_ingress_class
               # - properties:
               #   required:
               #     - k8s_ingress_host
