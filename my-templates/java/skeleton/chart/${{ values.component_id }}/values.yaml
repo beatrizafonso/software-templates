@@ -1,0 +1,146 @@
+kind: ""
+nameOverride: ""
+fullnameOverride: ""
+
+istio:
+  enabled: false
+
+imagePullSecrets: []
+
+imagePullPolicy: IfNotPresent
+
+imageAutomation:
+  enabled: false
+
+sessionAffinity:
+  enabled: false
+  maxAge: "3600000"
+
+tolerations: []
+  # - key: "preemptible"
+  #   operator: "Equal"
+  #   value: "true"
+  #   effect: "NoSchedule"
+
+podAnnotations: {}
+# prometheus.io/scrape: "true"
+# prometheus.io/port: "3333"
+# prometheus.io/path: "/metrics"
+
+livenessProbe: {}
+  # path: "/healthcheck"
+  # successThreshold: 1
+  # failureThreshold: 5
+  # periodSeconds: 10
+  # timeoutSeconds: 10
+  # initialDelaySeconds: 120
+
+readinessProbe: {}
+  # path: "/healthcheck"
+  # successThreshold: 1
+  # failureThreshold: 5
+  # periodSeconds: 10
+  # timeoutSeconds: 10
+  # initialDelaySeconds: 20
+
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  trafficProtocol: http
+  trafficPolicy: {}
+  rewrite: {}
+  redirect: {}
+  timeout: "3600s"
+  corsPolicy: {}
+  fault: {}
+  headers:
+    request:
+      set: {}
+      add: {}
+      remove: {}
+    response:
+      set: {}
+      add: {}
+      remove: {}
+       
+gateway:
+  enabled: false
+  isInternal: true
+  hosts: []
+
+ingress:
+  enabled: false
+  class: "internal-ingress"
+  annotations: {}
+  hosts: []
+  paths:
+    '/': {}
+    # '/other': {}
+  tls: []
+  # - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+productionDeployment:
+
+  priorityClassName: ""
+
+  image: ""
+
+  weight: 100
+
+  replicaCount: 1
+
+  env: {} 
+
+  secrets: {}
+
+  headers:
+    request:
+      set: {}
+      add: {}
+      remove: {}
+    response:
+      set: {}
+      add: {}
+      remove: {}
+
+  hpa:
+    enabled: false
+    # minReplicas: 3
+    # maxReplicas: 5
+    # targetCpu: 50
+
+  rollingUpdate:
+    maxSurge: 1
+
+  pdb:
+    maxUnavailable: 1
+    # minAvailable: 1
+  
+  resources: {}
+    # requests:
+    #   memory: "1.5Gi"
+    #   cpu: "200m"
+    # limits:
+    #   memory: "1.5Gi"
+    #   cpu: "1"
+
+  lifecycle: {}
+    # preStop:
+    #   exec:
+    #     command: ["shutdown.sh"]
+
+  postgresql:
+    enabled:  false 
+
+  redis:
+    enable: false
+
+# ----------------------------------------------------------------------------------------
+# CANARY
+# -----------------------------------------------------------------------------------------
+canaryDeployment:
+  enabled: false

@@ -1,0 +1,24 @@
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "helpers.fullname" . }}
+  labels:
+    {{- include "helpers.labels" . | nindent 4 }}
+spec:
+  host: {{ include "helpers.fullname" . }}
+  {{- if .Values.service.trafficPolicy }}
+  trafficPolicy:
+  {{- toYaml .Values.service.trafficPolicy | nindent 4 }}
+  {{- end }}
+  subsets:
+  - name: production
+    labels:
+    {{- include "helpers.selector" . | nindent 6 }}
+      canary: "false"
+  - name: canary
+    labels:
+    {{- include "helpers.selector" . | nindent 6 }}
+      canary: "true"
+{{- end }}

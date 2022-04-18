@@ -1,18 +1,18 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: ${{values.component_id | dump}}
-  namespace: ${{values.k8s_namespace | dump}}
+  name: ${{values.component_id}}
+  namespace: ${{values.k8s_namespace}}
   labels:
-    github/repo: "${{values.destination.repo | dump}}"
+    github/repo: "${{values.destination.repo}}"
 spec:
   maxHistory: 30
   interval: 5m
-  releaseName: ${{values.component_id | dump}}
-  targetNamespace: ${{values.k8s_namespace | dump}}
+  releaseName: ${{values.component_id}}
+  targetNamespace: ${{values.k8s_namespace}}
   chart:
     spec:
-      chart: ${{values.component_id | dump}}
+      chart: ${{values.component_id}}
       version: 0.1.0
       sourceRef:
         kind: HelmRepository
@@ -20,145 +20,81 @@ spec:
         namespace: flux-system
       interval: 1m
   values:
-    nameOverride: "${{values.component_id | dump}}"
-    fullnameOverride: "${{values.component_id | dump}}"
-    image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}:version # {"$imagepolicy": "flux-system:${{values.component_id | dump}}"}
+    kind: ${{ values.kind }}
+    nameOverride: "${{values.component_id}}"
+    fullnameOverride: "${{values.component_id}}"
+    istio:
+      enabled: true
     imagePullSecrets:
       - name: "ci-cd-registry"
       - name: "docker-registry"
+    imagePullPolicy: IfNotPresent
     deployLabels:
-      github/repo: "${{values.destination.repo | dump}}"
+      github/repo: "${{values.destination.repo}}"
       'backstage.io/kubernetes-id': ${{values.component_id | dump}}
     imageAutomation:
-      enabled: true
-      imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id | dump}}"
+      enabled: ${{values.imageAutomation}} # true or false
+      imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id}}"
 
-  {%- if values.envs %}
-    env:
-    {% for item in values.envs %}
-      ${{ item | dump}}
-      ${{ item["envName"] | dump}}: ${{ item["envValue"] | dump}}
-    {% endfor %}
-  {% else %}
-    env: {}
-  {%- endif %}
+    sessionAffinity:
+      enabled: false
+      maxAge: "3600000"
 
-
-  {%- if values.envs %}
-    env:
-    {% for item in values.envs %}
-      ${{ item }}
-      ${{ item["envName"] }}: ${{ item["envValue"] }}
-    {% endfor %}
-  {% else %}
-    env: {}
-  {%- endif %}
-
-
-    #########
-    ## SCHEDULING
-    ######
-    resources:
-      limits:
-        cpu: '1'
-        memory: 2Gi
-      requests:
-        cpu: 100m
-        memory: 2Gi
-
+    ##########################################################################################
+    ## COMMON CONFIGS (PRD/CANARY)
+    ##########################################################################################
     tolerations:
       - key: "preemptible"
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
-
-    nodeAffinity: {}
-    #  preferredDuringSchedulingIgnoredDuringExecution:
-    #  - weight: 10
-    #    nodeSelectorTerms:
-    #    - matchExpressions:
-    #      - key: preemptible
-    #        operator: In
-    #        values:
-    #        - "true"
-
     podAnnotations: {}
     # prometheus.io/scrape: "true"
     # prometheus.io/port: "3333"
     # prometheus.io/path: "/metrics"
 
-    serviceAccount:
-      enabled: false
-
-    #########
-    ## DATABASES
-    ######
-
-  # 
-  #   postgresql:
-  #     enabled: true
-  #     fullnameOverride: "we-extensions-postgresql"
-  #     image:
-  #       registry: docker.io
-  #       repository: bitnami/postgresql
-  #       tag: 11.14.0-debian-10-r17
-  #       pullPolicy: IfNotPresent
-  #       pullSecrets:
-  #         - name: "ci-cd-registry"
-  #         - name: "docker-registry"
-  #       debug: false
-  #     postgresqlUsername: "postgres"
-  #     existingSecret: "we-extensions-postgres-auth"
-  #     postgresqlDatabase: "we_ct_db"
-  #     persistence:
-  #       size: 8Gi
-  #     primary:
-  #       tolerations:
-  #         - key: "preemptible"
-  #           operator: "Equal"
-  #           value: "true"
-  #           effect: "NoSchedule"
-  #     resources:
-  #       requests:
-  #         memory: 256Mi
-  #         cpu: 250m
-  #       limits:
-  #         memory: 256Mi
-  #         cpu: 250m
-  #
-
     #########
     ## MONITORING
     ######
+  {%- if values.health_check %}
     livenessProbe:
-      path: "${{values.health_check | dump}}"
+      path: "${{values.health_check}}"
       successThreshold: 1
       failureThreshold: 3
       periodSeconds: 10
       timeoutSeconds: 10
       initialDelaySeconds: 60
     readinessProbe:
-      path: "${{values.health_check | dump}}"
+      path: "${{values.health_check}}"
       successThreshold: 1
       failureThreshold: 3
       periodSeconds: 10
       timeoutSeconds: 10
       initialDelaySeconds: 60
+  {%- endif %}
+
     #########
     ## CONNECTIVITY
     ######
     service:
       type: ClusterIP
-      port: 80
+      port: 80 
       targetPort: ${{ values.k8s_svc_port | dump }}
     ingress:
-      enabled: true
+      enabled: {% true if values.ingress_conditional == 1}
       annotations:
-        kubernetes.io/ingress.class: "external-ingress"
-        # ingress.kubernetes.io/whitelist-source-range: 189.23.221.102/32
+        kubernetes.io/ingress.class: ${{ values.k8s_ingress_class | dump }}
       hosts:
-        - ${{ values.k8s_ingress_host | dump }}
-        # - example.org
+      {%- if values.k8s_ingress_class == internal-ingress %}
+      {% for item in values.k8s_ingress_class %}
+        - ${{ item }}.internal.winevinhos.info
+      {% endfor %}
+      {% else %}
+      {% for item in values.k8s_ingress_class %}
+        - ${{ item }}.winevinhos.info
+      {% endfor %}
+      {%- endif %}
+      
       paths:
         '/': {}
         # '/other': {}
@@ -166,29 +102,214 @@ spec:
       # - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
-    #########
-    ## SCALING / ROLLOUT
-    ######
-    replicaCount: ${{ values.k8s_pod_replicas }}
-    hpa:
+
+    gateway:
+      enabled: ${{ values.ingress_conditional }} 
+      isInternal: true
+      hosts:
+      {%- if values.k8s_ingress_class == internal-ingress %}
+      {% for item in values.k8s_ingress_class %}
+        - ${{ item }}.mesh.internal.winevinhos.info
+      {% endfor %}
+      {% else %}
+      {% for item in values.k8s_ingress_class %}
+        - ${{ item }}.mesh.winevinhos.info
+      {% endfor %}
+      {%- endif %}
+
+
+    productionDeployment:
+
+
+    {%- if values.imageAutomation == true %} #TODO
+      image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version # {"$imagepolicy": "flux-system:${{values.component_id}}"}
+    {% else %}
+      image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version
+    {%- endif %}
+
+      weight: 100
+    {%- if values.envs %}
+      env:
+      {% for item in values.envs %}
+        ${{ item["envName"] }}: ${{ item["envValue"] | dump}}
+      {% endfor %}
+    {% else %}
+      env: {}
+    {%- endif %}
+
+    {%- if values.secrets %}
+      secrets:
+        {{ parameters.component_id }}-secret:
+        {% for item in values.secrets %}
+          ${{ item["secretName"] }}: ${{ item["secretValue"] | dump}}
+        {% endfor %}
+    {% else %}
+      secrets: {}
+    {%- endif %}
+
+
+      nodeAffinity: {}
+      #  preferredDuringSchedulingIgnoredDuringExecution:
+      #  - weight: 10
+      #    nodeSelectorTerms:
+      #    - matchExpressions:
+      #      - key: preemptible
+      #        operator: In
+      #        values:
+      #        - "true"
+
+      #########
+      ## DATABASES
+      ######
+    {%- if values.enablePostgresql == true %} #TODO
+      postgresql:
+        enabled:  ${{ values.enablePostgresql }} 
+        fullnameOverride: "{{ parameters.component_id }}-postgresql"
+        image:
+          registry: docker.io
+          repository: bitnami/postgresql
+          tag: ${{ values.postgresql_version }} 
+          pullPolicy: IfNotPresent
+          pullSecrets:
+            - name: "docker-registry"
+          debug: false
+        auth:
+          ## @param auth.enablePostgresUser Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user
+          ##
+          enablePostgresUser: ${{ values.enablePostgresqlUser }}
+          ## @param auth.database Name for a custom database to create
+          ##
+          {%- if values.postgresCustomDatabase %}
+          database: ${{ values.postgresCustomDatabase }}
+          {%- endif %}
+          ## @param auth.existingSecret Name of existing secret to use for PostgreSQL credentials
+          ## `auth.postgresPassword`, `auth.password`, and `auth.replicationPassword` will be ignored and picked up from this secret
+          ## The secret must contain the keys `postgres-password` (which is the password for "postgres" admin user),
+          ## `password` (which is the password for the custom user to create when `auth.username` is set),
+          ## and `replication-password` (which is the password for replication user).
+          ## The secret might also contains the key `ldap-password` if LDAP is enabled. `ldap.bind_password` will be ignored and
+          ## picked from this secret in this case.
+          ## The value is evaluated as a template.
+          ##
+          {%- if values.postgresSecret %}
+          existingSecret: {{ parameters.component_id }}-postgresql-secret #TODO create secret with {{ values.postgresPassword }} ; {{ values.postgresUsername }} ; {{ values.postgresCustomPassword }}
+          {%- endif %}
+        ## @param architecture PostgreSQL architecture (`standalone` or `replication`)
+        ##
+        primary:
+          persistence:
+            size: {{ parameters.postgresqlPersistenceSize }} 
+          tolerations:
+            - key: "preemptible"
+              operator: "Equal"
+              value: "true"
+              effect: "NoSchedule"
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 256Mi
+              cpu: 250m
+    {% else %}
+      postgresql:
+        enabled: false
+    {%- endif %}
+
+
+
+    {%- if values.enableRedis == true %}    ## talvez nao precise desse "== true"
+      redis:
+        enable: ${{ values.enableRedis }}
+        image:
+          registry: docker.io
+          repository: bitnami/redis
+          tag: ${{ values.redis_version }} #TODO #6.2.6-debian-10-r21 #6.2.6-debian-10-r179
+          pullPolicy: IfNotPresent
+          pullSecrets:
+            - docker-registry
+            - ci-cd-registry
+      {%- if values.enableRedisAuth == true %}
+        auth:
+          ## @param auth.enabled Enable password authentication
+          ##
+          enabled: true
+          ## @param auth.sentinel Enable password authentication on sentinels too
+          ##
+          sentinel: true
+          ## @param auth.existingSecret The name of an existing secret with Redis&trade; credentials
+          ## NOTE: When it's set, the previous `auth.password` parameter is ignored
+          ##
+          existingSecret: {{ parameters.component_id }}-redis-secret #TODO create secret (como criar o secret?)
+      {% else %}
+        auth:
+          enabled: false
+      {%- endif %}          
+        architecture: standalone
+        master:
+          persistence:
+            size: {{ parameters.redisPersistenceSize }}
+          tolerations:
+            - key: "preemptible"
+              operator: "Equal"
+              value: "true"
+              effect: "NoSchedule"
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 256Mi
+              cpu: 250m
+    {% else %}
+      redis:
+        enabled: false
+    {%- endif %}
+
+      replicaCount: ${{ values.k8s_pod_replicas }}
+
+      headers:
+        request:
+          set: {}
+          add: {}
+          remove: {}
+        response:
+          set: {}
+          add: {}
+          remove: {}      
+
+      hpa:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 3
+        targetCpu: 70
+        # custom:
+        #   - type: Object
+        #     object:
+        #       metric:
+        #         name: metric_name
+        #       describedObject:
+        #         kind: Deployment
+        #         name: deployment_name
+        #         apiVersion: /v1
+        #       target:
+        #         type: Value
+        #         value: 200
+      pdb:
+        maxUnavailable: 1
+        # minAvailable: 1
+      rollingUpdate:
+        maxSurge: 1
+
+      resources:
+        limits:
+          cpu: '1'
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    # ----------------------------------------------------------------------------------------
+    # CANARY
+    # -----------------------------------------------------------------------------------------
+    canaryDeployment:
       enabled: false
-      minReplicas: 1
-      maxReplicas: 3
-      targetCpu: 70
-      # custom:
-      #   - type: Object
-      #     object:
-      #       metric:
-      #         name: metric_name
-      #       describedObject:
-      #         kind: Deployment
-      #         name: deployment_name
-      #         apiVersion: /v1
-      #       target:
-      #         type: Value
-      #         value: 200
-    pdb:
-      maxUnavailable: 1
-      # minAvailable: 1
-    rollingUpdate:
-      maxSurge: 1

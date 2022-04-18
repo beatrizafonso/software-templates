@@ -1,0 +1,226 @@
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "helpers.fullname" . }}
+  labels:
+    {{- include "helpers.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.gateway.enabled }}
+  gateways:
+  - mesh
+  {{- if .Values.gateway.isInternal }}
+  - istio-internal-gateway/istio-internal-gateway
+  {{- else }}
+  - istio-external-gateway/istio-external-gateway
+  {{- end }}
+  {{- end }}
+  hosts:
+  - {{ include "helpers.fullname" . }}
+  - {{ include "helpers.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "helpers.fullname" . }}.{{ .Release.Namespace }}.svc
+  - {{ include "helpers.fullname" . }}.{{ .Release.Namespace }}.svc.cluster
+  - {{ include "helpers.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- if .Values.gateway.enabled }}
+  {{- range $i, $host := .Values.gateway.hosts }}
+  - {{ $host }}
+  {{- end }}
+  {{- end }}
+  {{- if eq .Values.service.trafficProtocol "http"}}
+  http:
+  {{- if .Values.sessionAffinity.enabled }}
+  - match:
+    - headers:
+        Cookie:
+          regex: .*userAffinity=production.*
+    route:
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        port:
+          number: {{ .Values.service.port }}
+        subset: production
+  - match:
+    - headers:
+        Cookie:
+          regex: .*userAffinity=canary.*
+    route:
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        port:
+          number: {{ .Values.service.port }}
+        subset: canary
+  {{- end }}
+  - route:
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        subset: production
+        port:
+          number: {{ .Values.service.port }}
+      {{- if .Values.canaryDeployment.enabled }}
+      weight: {{ .Values.productionDeployment.weight }}
+      {{- end }}
+      {{- if or .Values.productionDeployment.headers .Values.sessionAffinity.enabled }}
+      headers:
+        {{- if .Values.productionDeployment.headers.request }} 
+        request:
+          {{- if .Values.productionDeployment.headers.request.set }}
+          set:
+          {{- toYaml .Values.productionDeployment.headers.request.set | nindent 12 }}
+          {{- end }}
+          {{- if .Values.productionDeployment.headers.request.add }}
+          add:
+          {{- toYaml .Values.productionDeployment.headers.request.add | nindent 12 }}
+          {{- end }}
+          {{- if .Values.productionDeployment.headers.request.remove }}
+          remove:
+          {{- toYaml .Values.productionDeployment.headers.request.remove | nindent 12 }}
+          {{- end }}
+        {{- end }}
+        {{- if or .Values.productionDeployment.headers.response .Values.sessionAffinity.enabled }} 
+        response:
+          {{- if .Values.productionDeployment.headers.response.set }}
+          set:
+          {{- toYaml .Values.productionDeployment.headers.response.set | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.productionDeployment.headers.response.add .Values.sessionAffinity.enabled }}
+          add:
+          {{- if .Values.productionDeployment.headers.response.add }}
+          {{- toYaml .Values.productionDeployment.headers.response.add | nindent 12 }}
+          {{- end }}
+          {{- if .Values.sessionAffinity.enabled }}
+            Set-Cookie: userAffinity=production; Max-Age={{ .Values.sessionAffinity.maxAge }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.productionDeployment.headers.response.remove }}
+          remove:
+          {{- toYaml .Values.productionDeployment.headers.response.remove | nindent 12 }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- if .Values.canaryDeployment.enabled }}
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        subset: canary
+        port:
+          number: {{ .Values.service.port }}
+      weight: {{ .Values.canaryDeployment.weight }}
+      {{- if or .Values.canaryDeployment.headers .Values.sessionAffinity.enabled }}
+      headers:
+        {{- if .Values.canaryDeployment.headers.request }} 
+        request:
+          {{- if .Values.canaryDeployment.headers.request.set }}
+          set:
+          {{- toYaml .Values.canaryDeployment.headers.request.set | nindent 12 }}
+          {{- end }}
+          {{- if .Values.canaryDeployment.headers.request.add }}
+          add:
+          {{- toYaml .Values.canaryDeployment.headers.request.add | nindent 12 }}
+          {{- end }}
+          {{- if .Values.canaryDeployment.headers.request.remove }}
+          remove:
+          {{- toYaml .Values.canaryDeployment.headers.request.remove | nindent 12 }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.canaryDeployment.headers.response }} 
+        response:
+          {{- if .Values.canaryDeployment.headers.response.set }}
+          set:
+          {{- toYaml .Values.canaryDeployment.headers.response.set | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.canaryDeployment.headers.response.add .Values.sessionAffinity.enabled }}
+          add:
+          {{- if .Values.canaryDeployment.headers.response.add }}
+          {{- toYaml .Values.canaryDeployment.headers.response.add | nindent 12 }}
+          {{- end }}
+          {{- if .Values.sessionAffinity.enabled }}
+            Set-Cookie: userAffinity=canary; Max-Age={{ .Values.sessionAffinity.maxAge }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.canaryDeployment.headers.response.remove }}
+          remove:
+          {{- toYaml .Values.canaryDeployment.headers.response.remove | nindent 12 }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.service.rewrite }}
+    rewrite: 
+    {{- toYaml .Values.service.rewrite | nindent 4 }}
+    {{- end }}
+    {{- if .Values.service.redirect }}
+    redirect:
+    {{- toYaml .Values.service.redirect | nindent 4 }}
+    {{- end }}
+    timeout: {{ .Values.service.timeout | default "30s" }}
+    {{- if .Values.service.match }}
+    match:
+    {{- toYaml .Values.service.match | nindent 4 }}
+    {{- end }}
+    {{- if .Values.service.corsPolicy }}
+    corsPolicy:
+    {{- toYaml .Values.service.corsPolicy | nindent 6 }}
+    {{- end }}
+    {{- if .Values.service.fault }}
+    fault:
+    {{- toYaml .Values.service.fault | nindent 6 }}
+    {{- end}}
+    {{- if .Values.service.headers }}
+    headers:
+      {{- if .Values.service.headers.request }} 
+      request:
+        {{- if .Values.service.headers.request.set }}
+        set:
+        {{- toYaml .Values.service.headers.request.set | nindent 10 }}
+        {{- end }}
+        {{- if .Values.service.headers.request.add }}
+        add:
+        {{- toYaml .Values.service.headers.request.add | nindent 10 }}
+        {{- end }}
+        {{- if .Values.service.headers.request.remove }}
+        remove:
+        {{- toYaml .Values.service.headers.request.remove | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.service.headers.response }} 
+      response:
+        {{- if .Values.service.headers.response.set }}
+        set:
+        {{- toYaml .Values.service.headers.response.set | nindent 10 }}
+        {{- end }}
+        {{- if .Values.service.headers.response.add }}
+        add:
+        {{- toYaml .Values.service.headers.response.add | nindent 10 }}
+        {{- end }}
+        {{- if .Values.service.headers.response.remove }}
+        remove:
+        {{- toYaml .Values.service.headers.response.remove | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if eq .Values.service.trafficProtocol "tcp"}}
+  tcp:
+  - route:
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        subset: production
+        port:
+          number: {{ .Values.service.port }}
+      {{- if .Values.canaryDeployment.enabled }}
+      weight: {{ .Values.productionDeployment.weight }}
+      {{- end }}
+    {{- if .Values.canaryDeployment.enabled }}
+    - destination:
+        host: {{ include "helpers.fullname" . }}
+        subset: canary
+        port:
+          number: {{ .Values.service.port }}
+      weight: {{ .Values.canaryDeployment.weight }}
+     {{- end }} 
+    {{- if .Values.service.match }}
+    match:
+    {{- toYaml .Values.service.match | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,129 @@
+{{- if .Values.istio.enabled }}
+{{- if .Values.canaryDeployment.enabled }}
+---
+apiVersion: apps/v1
+kind: {{ .Values.kind }}
+metadata:
+  name: {{ include "helpers.fullname" . }}-canary
+  labels:
+    {{- include "helpers.labels" . | nindent 4 }}
+    canary: "true"
+spec:
+  {{- if not .Values.canaryDeployment.hpa.enabled }}
+  replicas: {{ .Values.canaryDeployment.replicaCount }}
+  {{- end }}
+
+  revisionHistoryLimit: 10
+
+  selector:
+    matchLabels:
+      {{- include "helpers.selector" . | nindent 6 }}
+      canary: "true"
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.canaryDeployment.rollingUpdate.maxSurge }}
+      maxUnavailable: 0
+
+  template:
+    metadata:
+      annotations:
+        checksum/env-config: {{ include (print $.Template.BasePath "/env-config-canary.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations -}}
+          {{ toYaml . | nindent 8}}
+        {{- end }}
+      labels:
+        {{- include "helpers.labels" . | nindent 8 }}
+        canary: "true"
+
+    spec:
+
+    {{- with .Values.canaryDeployment.priorityClassName }}
+      priorityClassName: {{ . }}
+    {{- end }}
+    
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.canaryDeployment.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+          envFrom:
+            - configMapRef:
+                name: {{ include "helpers.fullname" . }}-canary
+
+          env:
+          {{- range $secretName, $secretMap := .Values.canaryDeployment.secrets }}
+          {{- range $secretKey, $envName := $secretMap  }}
+            - name: {{ $envName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ $secretKey }}
+          {{- end }}
+          {{- end }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path | default "/" }}
+              port: {{ .Values.service.targetPort | default "http" }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path | default "/" }}
+              port: {{ .Values.service.targetPort | default "http" }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+
+          resources:
+            {{- toYaml .Values.canaryDeployment.resources | nindent 12 }}
+
+          {{- with .Values.canaryDeployment.lifecycle }}
+          lifecycle:       
+          {{ toYaml . | nindent 12 }}  
+          {{- end }}
+
+      affinity:
+        {{- with .Values.nodeAffinity }}
+        nodeAffinity:
+          {{ toYaml . | nindent 10 }}
+        {{- end }}
+
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: {{ .Values.podAntiAffinity.weight | default "99" }}
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: {{ include "helpers.appLabelKey" . }}
+                  operator: In
+                  values:
+                  - {{ include "helpers.name" . }}
+                - key: canary
+                  operator: In
+                  values:
+                  - "true"
+              topologyKey: "kubernetes.io/hostname"
+
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+{{- end }}
+{{- end }}

@@ -26,6 +26,7 @@ spec:
           title: Component Name
           type: string
           description: Unique name of the component
+          customFormats: [a-zA-Z-0-9]
 
         description:
           title: Component Description
@@ -102,6 +103,7 @@ spec:
           description: Make sure this path exists in your application.
           ui:options:
             defaultValue: /       ##### NAO TA FUNCIONANDO
+          customFormats: [a-zA-Z-/0-9]
 
         envs:
           title: Environment Variables
@@ -116,6 +118,8 @@ spec:
               envName:
                 type: string
                 title: Env Name
+                description: Only letters in uppercase and "_"
+                customFormats: [A-Z_]
               envValue:
                 type: string
                 title: Env Value
@@ -123,7 +127,7 @@ spec:
 
         secrets:
           title: Secrets
-          description: Application Secrets
+          description: Environment variables that must be secrets
           type: array
           required:
             - secretName
@@ -134,6 +138,8 @@ spec:
               secretName:
                 type: string
                 title: Secret Name
+                description: Only letters in uppercase and "_"
+                customFormats: [A-Z_]
               secretValue:
                 type: string
                 title: Secret Value
@@ -152,6 +158,7 @@ spec:
           type: string
           ui:options:
             defaultValue: default
+          customFormats: [a-z-]
 
         k8s_svc_port:
           title: Service Port
@@ -163,6 +170,9 @@ spec:
           type: number
           default: 1
 
+        # ingress_conditional
+        # internal or external?
+
         # ingress:
         #   title: Ingress
         #   type: string
@@ -172,61 +182,240 @@ spec:
         #     - internal-ingress
         #     - external-ingress
 
-
-        # Enable HPA?
-
-        # k8s_hpa_prod:
-        #   title: Horizontal Pod AutoScaler (Production)
-        #   type: object
-        #   required:
-        #     - k8s_hpa_mem_au_prod
-        #     - k8s_hpa_cpu_au_prod
-        #     - k8s_hpa_min_replicas_prod
-        #     - k8s_hpa_max_replicas_prod
-        #   properties:
-        #     k8s_hpa_min_replicas_prod:
-        #       title: Min Replicas
-        #       type: number
-        #       default: 2
-        #     k8s_hpa_max_replicas_prod:
-        #       title: Max Replicas
-        #       type: number
-        #       default: 4
-        #     k8s_hpa_mem_au_prod:
-        #       title: Cpu Utilization
-        #       type: number
-        #       default: 65
-        #     k8s_hpa_cpu_au_prod:
-        #       title: Memory Utilization
-        #       type: number
-        #       default: 65
+        kind_resource:
+          title: "The service will be deployed as a:"
+          type: string
+          default: Deployment
+          enum:
+            - Deployment
+            - Statefulset
 
 
-        # k8s_hpa_stg:
-        #   title: Horizontal Pod AutoScaler (Staging)
-        #   type: object
-        #   required:
-        #     - k8s_hpa_mem_au_stg
-        #     - k8s_hpa_cpu_au_stg
-        #     - k8s_hpa_min_replicas_stg
-        #     - k8s_hpa_max_replicas_stg
-        #   properties:
-        #     k8s_hpa_min_replicas_stg:
-        #       title: Min Replicas
-        #       type: number
-        #       default: 1
-        #     k8s_hpa_max_replicas_stg:
-        #       title: Max Replicas
-        #       type: number
-        #       default: 2
-        #     k8s_hpa_mem_au_stg:
-        #       title: Cpu Utilization
-        #       type: number
-        #       default: 80
-        #     k8s_hpa_cpu_au_stg:
-        #       title: Memory Utilization
-        #       type: number
-        #       default: 80
+        ingress:
+          title: Ingress
+          type: object
+          properties:
+            ingress_conditional:
+              title: Enable Ingress?
+              type: number
+              enum:
+                - 0
+                - 1
+                - 2
+              enumNames:
+                - 'No'
+                - 'Yes: One'
+                - 'Yes: More than one'
+              default: 0
+          required:
+          - ingress_conditional
+          dependencies:
+            ingress_conditional:
+              oneOf:
+              - properties:
+                  ingress_conditional:
+                    enum:
+                    - 0
+              - properties:
+                required:
+                - k8s_ingress_host
+                - k8s_ingress_class
+                  ingress_conditional:
+                    enum:
+                    - 1
+                  k8s_ingress_host:
+                    title: Host URL
+                    type: string
+                    description: "Subdomain only. Example: <subdomain>.wine.bom.br"
+                    customFormats: [a-zA-Z-0-9]
+                    default: ${{ parameters.component_id }}
+                  k8s_ingress_class:
+                    title: Host URL
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+              - properties:
+                required:
+                - k8s_ingress_host
+                - k8s_ingress_class
+                  ingress_conditional:
+                    enum:
+                    - 2
+                  k8s_ingress_host:
+                    title: Host URL
+                    type: array
+                    customFormats: [a-zA-Z-0-9]
+                    items:
+                      type: string
+                      description: "Subdomain only. Example: <subdomain>.wine.bom.br"
+                    default: ${{ parameters.component_id }}
+                  k8s_ingress_class:
+                    title: Host URL
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+
+    - title: Dependencies
+      required:
+        - enablePostgresql
+        - enableRedis
+      properties:
+        enablePostgresql:
+          title: Enable PostgreSQL?
+          type: boolean
+          - title: Enable
+            const: true
+          - title: Disable
+            const: false
+          default: false
+
+
+          required:
+          - enablePostgresql
+          dependencies:
+            enablePostgres:
+              oneOf:
+              - properties:
+                  enablePostgresql:
+                    enum:
+                    - false
+              - properties:
+                  enablePostgresql:
+                    enum:
+                    - true
+                  postgresql_version:
+                    title: PostgreSQL Version
+                    type: string
+                    enum:
+                      - 11.14.0-debian-10-r17
+                      - 14.2.0-debian-10-r58
+                    enumNames:
+                      - "11"
+                      - "14"
+                    default: 14.2.0-debian-10-r58
+                    required:
+                    - postgresql_version
+
+                  postgresqlPersistenceSize:
+                    title: PostgreSQL persistence Size
+                    type: number
+                    enum:
+                      - 8Gi
+                      - 16Gi
+                      - 24Gi
+                      - 32Gi
+                    default: 8Gi
+                    required:
+                    - postgresqlPersistenceSize
+
+                  enablePostgresqlUser:
+                    title: Enable Postgres user?
+                    type: boolean
+                    - title: Enable
+                      const: true
+                    - title: Disable
+                      const: false
+                    default: true
+              
+
+                    required:
+                    - enablePostgresqlUser
+                    dependencies:
+                      enablePostgresqlUser:
+                        oneOf:
+                        - properties:
+                            enablePostgresqlUser:
+                              enum:
+                              - false
+                        - properties:
+                            enablePostgresqlUser:
+                              enum:
+                              - true
+                            postgresSecret:
+                              title: PostgreSQL password
+                              type: string
+                              description: secret to use for PostgreSQL credentials 
+
+        enableRedis:
+          title: Enable Redis?
+          type: boolean
+          - title: Enable
+            const: true
+          - title: Disable
+            const: false
+          default: false
+
+
+          required:
+          - enableRedis
+          dependencies:
+            enableRedis:
+              oneOf:
+              - properties:
+                  enableRedis:
+                    enum:
+                    - false
+              - properties:
+                  enableRedis:
+                    enum:
+                    - true
+                  redis_version:
+                    title: Redis Version
+                    type: string
+                    enum:
+                      - 6.2.6-debian-10-r21
+                      - 6.2.6-debian-10-r179
+                    enumNames:
+                      - 6.2.6-debian-10-r21
+                      - 6.2.6-debian-10-r179
+                    default: 6.2.6-debian-10-r179
+                    required:
+                    - redis_version
+
+
+                  redisPersistenceSize:
+                    title: Rdis persistence Size
+                    type: number
+                    enum:
+                      - 8Gi
+                      - 16Gi
+                      - 24Gi
+                      - 32Gi
+                    default: 8Gi
+                    required:
+                    - redisPersistenceSize
+
+                  enableRedisAuth:
+                    title: Enable Redis Authentication?
+                    type: boolean
+                    - title: Enable
+                      const: true
+                    - title: Disable
+                      const: false
+                    default: true
+              
+
+                    required:
+                    - enableRedisAuth
+                    dependencies:
+                      enableRedisAuth:
+                        oneOf:
+                        - properties:
+                            enableRedisAuth:
+                              enum:
+                              - false
+                        - properties:
+                            enableRedisAuth:
+                              enum:
+                              - true
+                            RedisSecret:
+                              title: Redis password
+                              type: string
+                              description: secret to use for Redis credentials 
 
     - title: Choose a location  
       required:
@@ -261,6 +450,20 @@ spec:
           health_check: ${{ parameters.health_check }}
           envs: ${{ parameters.envs }}
           secrets: ${{ parameters.secrets }}
+          kind: ${{ parameters.kind_resource }}
+          ingress_conditional: ${{ parameters.ingress_conditional }}
+          k8s_ingress_host: ${{ parameters.k8s_ingress_host }}
+          k8s_ingress_class: ${{ parameters.k8s_ingress_class }}
+          enablePostgresql: ${{ parameters.enablePostgresql }}
+          postgresql_version: ${{ parameters.postgresql_version }}
+          postgresqlPersistenceSize: ${{ parameters.postgresqlPersistenceSize }}
+          enablePostgresqlUser: ${{ parameters.enablePostgresqlUser }}
+          postgresSecret: ${{ parameters.postgresSecret }}
+          enableRedis: ${{ parameters.enableRedis }}
+          redis_version: ${{ parameters.redis_version }}
+          redisPersistenceSize: ${{ parameters.redisPersistenceSize }}
+          enableRedisAuth: ${{ parameters.enableRedisAuth }}
+          RedisSecret: ${{ parameters.RedisSecret }}
 
     - id: publishrepo
       name: Publish New Git Repository
@@ -320,7 +523,7 @@ spec:
         description: |
           # New trigger: ${{ parameters.repo-name }}
 
-          {{#if parameters.shortDescription}}
+          {{if parameters.shortDescription}}
           ${{ parameters.shortDescription }}
           {{/if}}
 

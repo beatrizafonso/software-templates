@@ -1,0 +1,15 @@
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "helpers.fullname" . }}
+  labels:
+    {{- include "helpers.labels" . | nindent 4 }}
+    canary: "false"
+spec:
+  maxUnavailable: {{ .Values.productionDeployment.pdb.maxUnavailable }}
+  minAvailable: {{ .Values.productionDeployment.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "helpers.selector" . | nindent 6 }}
+      canary: "false"
