@@ -98,8 +98,12 @@ spec:
         - ${{ item }}.winevinhos.info
       {% endfor %}
       {%- endif %}
-
+########## k8s_ingress_class
       ${{ values.k8s_ingress_class }}
+########## ingress
+      ${{values.ingress}}
+########## PostgreSQL
+      ${{values.PostgreSQL}}
       
       paths:
         '/': {}
@@ -120,21 +124,17 @@ spec:
       {% else %}
       isInternal: false
       {%- endif %}
-
-      ${{values.k8s_ingress_clas}}
-
+      ${{values.k8s_ingress_class}}
       hosts:
       {%- if values.k8s_ingress_class == "internal-ingress" %}
-      {% for item in values.k8s_ingress_class %}
+      {%- for item in values.k8s_ingress_class %}
         - ${{ item }}.mesh.internal.winevinhos.info
-      {% endfor %}
-      {% else %}
+      {%- endfor %}
+      {%- else %}
       {% for item in values.k8s_ingress_class %}
         - ${{ item }}.mesh.winevinhos.info
-      {% endfor %}
+      {%- endfor %}
       {%- endif %}
-
-
     productionDeployment:
     {%- if values.imageAutomation == true %} #TODO
       image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version # {"$imagepolicy": "flux-system:${{values.component_id}}"}
@@ -160,8 +160,6 @@ spec:
     {%- else %}
       secrets: {}
     {%- endif %}
-
-
       nodeAffinity: {}
       #  preferredDuringSchedulingIgnoredDuringExecution:
       #  - weight: 10

@@ -437,10 +437,12 @@ spec:
           envs: ${{ parameters.envs }}
           secrets: ${{ parameters.secrets }}
           kind: ${{ parameters.kind_resource }}
-          ingress_conditional: ${{ parameters.ingress_conditional }}
+          ingress: ${{ parameters.ingress }}
+          ingress_conditional: ${{ parameters.ingress.ingress_conditional }}
           k8s_ingress_host: ${{ parameters.k8s_ingress_host }}
           k8s_ingress_class: ${{ parameters.k8s_ingress_class }}
-          enablePostgresql: ${{ parameters.enablePostgresql }}
+          PostgreSQL: ${{parameters.PostgreSQL}}
+          enablePostgresql: ${{ parameters.PostgreSQL.enablePostgresql }}
           postgresql_version: ${{ parameters.postgresql_version }}
           postgresqlPersistenceSize: ${{ parameters.postgresqlPersistenceSize }}
           enablePostgresqlUser: ${{ parameters.enablePostgresqlUser }}
