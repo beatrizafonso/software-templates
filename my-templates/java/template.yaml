@@ -15,247 +15,234 @@ spec:
   type: service
   
   parameters:
-    # - title: Metadata
-    #   required:
-    #     - component_id
-    #     - description
-    #     - technical_lead
-    #     - owner
-    #   properties:
-    #     component_id:
-    #       title: Component Name
-    #       type: string
-    #       description: Unique name of the component
-    #       customFormats: [a-zA-Z-0-9]
+    - title: Metadata
+      required:
+        - component_id
+        - description
+        - technical_lead
+        - owner
+      properties:
+        component_id:
+          title: Component Name
+          type: string
+          description: Unique name of the component
+          customFormats: [a-zA-Z-0-9]
 
-    #     description:
-    #       title: Component Description
-    #       type: string
-    #       description: Help others understand what this service is for.
+        description:
+          title: Component Description
+          type: string
+          description: Help others understand what this service is for.
 
-    #     # team:
-    #     #   title: Team Name
-    #     #   type: string
-    #     #   description: Team Name
-    #     #   ui:field: TeamPicker
+        # team:
+        #   title: Team Name
+        #   type: string
+        #   description: Team Name
+        #   ui:field: TeamPicker
 
-    #     technical_lead:
-    #       title: Technical Leader
-    #       type: string
-    #       description: Technical Leader Name
+        technical_lead:
+          title: Technical Leader
+          type: string
+          description: Technical Leader Name
 
-    #     owner:
-    #       title: Owner
-    #       type: string
-    #       description: Owner of the component
-    #       ui:field: OwnerPicker
-    #       ui:options:
-    #         allowedKinds: 
-    #           - Group           ######## NAO TA FUNCIONANDO
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds: 
+              - Group           ######## NAO TA FUNCIONANDO
 
 
-    # - title: Application
-    #   required:
-    #     - country
-    #     - javaVersion
-    #     - application_name
-    #     - lifecycle
-    #     - health_check
-    #   properties:
+    - title: Application
+      required:
+        - country
+        - javaVersion
+        - application_name
+        - lifecycle
+        - health_check
+      properties:
 
-    #     application_name:
-    #       title: Application Name
-    #       type: string
-    #       description: Application Name
+        application_name:
+          title: Application Name
+          type: string
+          description: Application Name
 
-    #     lifecycle:
-    #       title: Lifecycle
-    #       type: string
-    #       default: staging
-    #       enum:
-    #         - production
-    #         - staging
-    #     country:
-    #       title: Country
-    #       type: string
-    #       default: BR
-    #       enum:
-    #         - BR
-    #         - MX
-    #       enumNames:
-    #         - Brasil
-    #         - Mexico
+        lifecycle:
+          title: Lifecycle
+          type: string
+          default: staging
+          enum:
+            - production
+            - staging
+        country:
+          title: Country
+          type: string
+          default: BR
+          enum:
+            - BR
+            - MX
+          enumNames:
+            - Brasil
+            - Mexico
 
-    #     javaVersion:
-    #       title: Java Version
-    #       type: string
-    #       default: openjdk:15.0.1-jdk
-    #       enum:
-    #         - openjdk:15.0.1-jdk
-    #         - openjdk:8
-    #         - openjdk:8-jdk 
-    #         - openjdk:8u131-jdk-alpine
-    #         - openjdk:jre-alpine3.8
+        javaVersion:
+          title: Java Version
+          type: string
+          default: openjdk:15.0.1-jdk
+          enum:
+            - openjdk:15.0.1-jdk
+            - openjdk:8
+            - openjdk:8-jdk 
+            - openjdk:8u131-jdk-alpine
+            - openjdk:jre-alpine3.8
         
-    #     health_check:
-    #       title: Application Health Check path
-    #       type: string
-    #       description: Make sure this path exists in your application.
-    #       ui:options:
-    #         defaultValue: /       ##### NAO TA FUNCIONANDO
-    #       customFormats: [a-zA-Z-/0-9]
+        health_check:
+          title: Application Health Check path
+          type: string
+          description: Make sure this path exists in your application.
+          default: /       ##### NAO TA FUNCIONANDO
+          customFormats: [a-zA-Z-/0-9]
 
-    #     envs:
-    #       title: Environment Variables
-    #       description: Application Environment Variables
-    #       type: array
-    #       required:
-    #         - envName
-    #         - envValue
-    #       items:
-    #         type: object
-    #         properties:
-    #           envName:
-    #             type: string
-    #             title: Env Name
-    #             description: Only letters in uppercase and _.
-    #             customFormats: [A-Z_]
-    #           envValue:
-    #             type: string
-    #             title: Env Value
-
-
-    #     secrets:
-    #       title: Secrets
-    #       description: Environment variables that must be secrets
-    #       type: array
-    #       required:
-    #         - secretName
-    #         - secretValue
-    #       items:
-    #         type: object
-    #         properties:
-    #           secretName:
-    #             type: string
-    #             title: Secret Name
-    #             description: Only letters in uppercase and _.
-    #             customFormats: [A-Z_]
-    #           secretValue:
-    #             type: string
-    #             title: Secret Value
-    #             # ui:widget: password
-
-    # - title: Kubernetes
-    #   required:
-    #     - k8s_namespace
-    #     - k8s_svc_port
-    #     - k8s_pod_replicas
-    #     # - k8s_hpa_prod
-    #     # - ingress
-    #   properties:
-    #     k8s_namespace:
-    #       title: Kubernetes Namespace
-    #       type: string
-    #       ui:options:
-    #         defaultValue: default
-    #       customFormats: [a-z-]
-
-    #     k8s_svc_port:
-    #       title: Service Port
-    #       type: number
-    #       default: 8080
-
-    #     k8s_pod_replicas:
-    #       title: Total Replicas
-    #       type: number
-    #       default: 1
-
-    #     # ingress_conditional
-    #     # internal or external?
-
-    #     # ingress:
-    #     #   title: Ingress
-    #     #   type: string
-    #     #   description: Name for java runtime.
-    #     #   default: internal-ingress
-    #     #   enum:
-    #     #     - internal-ingress
-    #     #     - external-ingress
-
-    #     kind_resource:
-    #       title: "The service will be deployed as a:"
-    #       type: string
-    #       default: Deployment
-    #       enum:
-    #         - Deployment
-    #         - Statefulset
+        envs:
+          title: Environment Variables
+          description: Application Environment Variables
+          type: array
+          required:
+            - envName
+            - envValue
+          items:
+            type: object
+            properties:
+              envName:
+                type: string
+                title: Env Name
+                description: Only letters in uppercase and _.
+                customFormats: [A-Z_]
+              envValue:
+                type: string
+                title: Env Value
 
 
-    #     ingress:
-    #       title: Ingress
-    #       type: object
-    #       required:
-    #       - ingress_conditional
-    #       properties:
-    #         ingress_conditional:
-    #           title: Enable Ingress?
-    #           type: string
-    #           enum:
-    #             - "no"
-    #             - "one"
-    #             - "mutiple"
-    #           enumNames:
-    #             - 'No'
-    #             - 'Yes: One'
-    #             - 'Yes: More than one'
-    #           default: "no"
-    #       dependencies:
-    #         ingress_conditional:
-    #           oneOf:
-    #           - properties:
-    #               ingress_conditional:
-    #                 enum:
-    #                 - "no"
-    #           - properties:
-    #               ingress_conditional:
-    #                 enum:
-    #                 - "one"
-    #               k8s_ingress_host:
-    #                 title: Host URL
-    #                 type: string
-    #                 description: "Subdomain only. Example: <subdomain>.wine.com.br"
-    #                 customFormats: [a-zA-Z-0-9]
-    #               k8s_ingress_class:
-    #                 title: Ingress Class
-    #                 type: string
-    #                 enum:
-    #                   - internal-ingress
-    #                   - external-ingress
-    #                 default: internal-ingress
-    #             required: 
-    #             - k8s_ingress_host
-    #             - k8s_ingress_class
-    #           - properties:
-    #               ingress_conditional:
-    #                 enum:
-    #                 - "mutiple"
-    #               k8s_ingress_host:
-    #                 title: Host URL
-    #                 type: array
-    #                 customFormats: [a-zA-Z-0-9]
-    #                 items:
-    #                   type: string
-    #                   description: "Subdomain only. Example: <subdomain>.wine.com.br"
-    #               k8s_ingress_class:
-    #                 title: Ingress Class
-    #                 type: string
-    #                 enum:
-    #                   - internal-ingress
-    #                   - external-ingress
-    #                 default: internal-ingress
-    #             required:
-    #             - k8s_ingress_host
-    #             - k8s_ingress_class
+        secrets:
+          title: Secrets
+          description: Environment variables that must be secrets
+          type: array
+          required:
+            - secretName
+            - secretValue
+          items:
+            type: object
+            properties:
+              secretName:
+                type: string
+                title: Secret Name
+                description: Only letters in uppercase and _.
+                customFormats: [A-Z_]
+              secretValue:
+                type: string
+                title: Secret Value
+                # ui:widget: password
+
+    - title: Kubernetes
+      required:
+        - k8s_namespace
+        - k8s_svc_port
+        - k8s_pod_replicas
+        # - k8s_hpa_prod
+        # - ingress
+      properties:
+        k8s_namespace:
+          title: Kubernetes Namespace
+          type: string
+          ui:options:
+            defaultValue: default
+          customFormats: [a-z-]
+
+        k8s_svc_port:
+          title: Service Port
+          type: number
+          default: 8080
+
+        k8s_pod_replicas:
+          title: Total Replicas
+          type: number
+          default: 1
+
+        kind_resource:
+          title: "The service will be deployed as a:"
+          type: string
+          default: Deployment
+          enum:
+            - Deployment
+            - Statefulset
+
+
+        ingress:
+          title: Ingress
+          type: object
+          required:
+          - ingress_conditional
+          properties:
+            ingress_conditional:
+              title: Enable Ingress?
+              type: string
+              enum:
+                - "no"
+                - "one"
+                - "mutiple"
+              enumNames:
+                - 'No'
+                - 'Yes: One'
+                - 'Yes: More than one'
+              default: "no"
+          dependencies:
+            ingress_conditional:
+              oneOf:
+              - properties:
+                  ingress_conditional:
+                    enum:
+                    - "no"
+              - properties:
+                  ingress_conditional:
+                    enum:
+                    - "one"
+                  k8s_ingress_host:
+                    title: Host URL
+                    type: string
+                    description: "Subdomain only. Example: <subdomain>.wine.com.br"
+                    customFormats: [a-zA-Z-0-9]
+                  k8s_ingress_class:
+                    title: Ingress Class
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+                required: 
+                - k8s_ingress_host
+                - k8s_ingress_class
+              - properties:
+                  ingress_conditional:
+                    enum:
+                    - "mutiple"
+                  k8s_ingress_host:
+                    title: Host URL
+                    type: array
+                    customFormats: [a-zA-Z-0-9]
+                    items:
+                      type: string
+                      description: "Subdomain only. Example: <subdomain>.wine.com.br"
+                  k8s_ingress_class:
+                    title: Ingress Class
+                    type: string
+                    enum:
+                      - internal-ingress
+                      - external-ingress
+                    default: internal-ingress
+                required:
+                - k8s_ingress_host
+                - k8s_ingress_class
 
     - title: Dependencies
       required:
