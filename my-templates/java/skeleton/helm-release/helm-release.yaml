@@ -115,10 +115,8 @@ spec:
       {%- endif %}
       {%- if values.k8s_ingress_class == "internal-ingress" %}
       isInternal: true
-      isInternal: {%- "true" if values.k8s_ingress_class == "internal-ingress" else "false" %}
       {% else %}
       isInternal: false
-      isInternal: {%- "true" if values.k8s_ingress_class == "internal-ingress" else "false" %}
       {%- endif %}
       hosts:
       {%- if values.k8s_ingress_class == "internal-ingress" %}
