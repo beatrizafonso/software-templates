@@ -35,11 +35,9 @@ spec:
     imageAutomation:
       enabled: ${{values.imageAutomation}} # true or false
       imageRepo: "gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id}}"
-
     sessionAffinity:
       enabled: false
       maxAge: "3600000"
-
     ##########################################################################################
     ## COMMON CONFIGS (PRD/CANARY)
     ##########################################################################################
@@ -72,7 +70,6 @@ spec:
       timeoutSeconds: 10
       initialDelaySeconds: 60
   {%- endif %}
-
     #########
     ## CONNECTIVITY
     ######
@@ -98,13 +95,6 @@ spec:
         - ${{ item }}.winevinhos.info
       {% endfor %}
       {%- endif %}
-########## k8s_ingress_class
-      ${{ values.k8s_ingress_class }}
-########## ingress
-      ${{values.ingress}}
-########## PostgreSQL
-      ${{values.PostgreSQL}}
-      
       paths:
         '/': {}
         # '/other': {}
@@ -112,7 +102,6 @@ spec:
       # - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
-
     gateway:
       {%- if values.ingress_conditional == "no" %}
       enabled: false
@@ -173,9 +162,6 @@ spec:
       #########
       ## DATABASES
       ######]
-
-      ${{values.enablePostgreSQL}}
-    
     {%- if values.enablePostgreSQL == "yes" %} #TODO
       postgresql:
         enabled: true
@@ -328,3 +314,22 @@ spec:
     # -----------------------------------------------------------------------------------------
     canaryDeployment:
       enabled: false
+
+
+
+
+
+
+          ${{values.ingress_conditional}}
+          ${{values.k8s_ingress_host}}
+          ${{values.k8s_ingress_class}}
+          ${{values.enablePostgreSQL}}
+          ${{values.postgresql_version}}
+          ${{values.postgresqlPersistenceSize}}
+          ${{values.enablePostgresqlUser}}
+          ${{values.postgresSecret}}
+          ${{values.enableRedis}}
+          ${{values.redis_version}}
+          ${{values.redisPersistenceSize}}
+          ${{values.enableRedisAuth}}
+          ${{values.RedisSecret}}

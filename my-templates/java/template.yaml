@@ -437,21 +437,19 @@ spec:
           envs: ${{ parameters.envs }}
           secrets: ${{ parameters.secrets }}
           kind: ${{ parameters.kind_resource }}
-          ingress: ${{ parameters.ingress }}
           ingress_conditional: ${{ parameters.ingress.ingress_conditional }}
-          k8s_ingress_host: ${{ parameters.k8s_ingress_host }}
-          k8s_ingress_class: ${{ parameters.k8s_ingress_class }}
-          PostgreSQL: ${{parameters.PostgreSQL}}
-          enablePostgresql: ${{ parameters.PostgreSQL.enablePostgresql }}
-          postgresql_version: ${{ parameters.postgresql_version }}
-          postgresqlPersistenceSize: ${{ parameters.postgresqlPersistenceSize }}
-          enablePostgresqlUser: ${{ parameters.enablePostgresqlUser }}
-          postgresSecret: ${{ parameters.postgresSecret }}
-          enableRedis: ${{ parameters.enableRedis }}
-          redis_version: ${{ parameters.redis_version }}
-          redisPersistenceSize: ${{ parameters.redisPersistenceSize }}
-          enableRedisAuth: ${{ parameters.enableRedisAuth }}
-          RedisSecret: ${{ parameters.RedisSecret }}
+          k8s_ingress_host: ${{ parameters.ingress.ingress_conditional.k8s_ingress_host }}
+          k8s_ingress_class: ${{ parameters.ingress.ingress_conditional.k8s_ingress_class }}
+          enablePostgreSQL: ${{ parameters.PostgreSQL.enablePostgresql }}
+          postgresql_version: ${{ parameters.PostgreSQL.enablePostgresql.postgresql_version }}
+          postgresqlPersistenceSize: ${{ parameters.PostgreSQL.enablePostgresql.postgresqlPersistenceSize }}
+          enablePostgresqlUser: ${{ parameters.PostgreSQL.enablePostgresql.PostgresqlUser.enablePostgresqlUser }}
+          postgresSecret: ${{ parameters.PostgreSQL.enablePostgresql.PostgresqlUser.enablePostgresqlUser.postgresSecret }}
+          enableRedis: ${{ parameters.Redis.enableRedis }}
+          redis_version: ${{ parameters.Redis.enableRedis.redis_version }}
+          redisPersistenceSize: ${{ parameters.Redis.enableRedis.redisPersistenceSize }}
+          enableRedisAuth: ${{ parameters.Redis.enableRedis.RedisAuth.enableRedisAuth }}
+          RedisSecret: ${{ parameters.Redis.enableRedis.RedisAuth.enableRedisAuth.RedisSecret }}
 
     - id: publish-pull-request-test-hr
       name: Publish Pull Request
