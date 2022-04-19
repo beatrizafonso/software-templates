@@ -270,7 +270,7 @@ spec:
             - "no"
           default: "no"
       dependencies:
-        enablePostgres:
+        enablePostgresql:
           oneOf:
           - properties:
               enablePostgresql:
