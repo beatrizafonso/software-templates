@@ -264,18 +264,10 @@ spec:
       properties:
         enablePostgresql:
           title: Enable PostgreSQL?
-          type: boolean
+          type: string
           enum:
-            - yes
-            - no
-        Toggle:
-          title: Toggle
-          type: boolean
-          oneOf:
-          - title: Enable
-            const: true
-          - title: Disable
-            const: false
+            - "yes"
+            - "no"
           # dependencies:
           #   enablePostgres:
           #     oneOf:
