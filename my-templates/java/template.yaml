@@ -268,6 +268,14 @@ spec:
           enum:
             - yes
             - no
+        Toggle:
+          title: Toggle
+          type: boolean
+          oneOf:
+          - title: Enable
+            const: true
+          - title: Disable
+            const: false
           # dependencies:
           #   enablePostgres:
           #     oneOf:
