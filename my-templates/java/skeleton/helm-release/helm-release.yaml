@@ -81,7 +81,11 @@ spec:
       port: 80 
       targetPort: ${{ values.k8s_svc_port | dump }}
     ingress:
-      enabled: {% true if values.ingress_conditional == 1}
+      {%- if values.ingress_conditional == "no" %}
+      enabled: false
+      {% else %}
+      enabled: true  
+      {%- endif %}
       annotations:
         kubernetes.io/ingress.class: ${{ values.k8s_ingress_class | dump }}
       hosts:
@@ -106,10 +110,8 @@ spec:
     gateway:
       {%- if values.ingress_conditional == "no" %}
       enabled: false
-      enabled:  {%- "true" if values.ingress_conditional == "yes" else "false" %}
       {% else %}
       enabled: true
-      enabled:  {%- "true" if values.ingress_conditional == "yes" else "false" %}
       {%- endif %}
       {%- if values.k8s_ingress_class == "internal-ingress" %}
       isInternal: true
