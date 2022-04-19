@@ -268,27 +268,28 @@ spec:
           enum:
             - "yes"
             - "no"
-          # dependencies:
-          #   enablePostgres:
-          #     oneOf:
-          #     - properties:
-          #         enablePostgresql:
-          #           enum:
-          #           - false
-          #     - properties:
-          #         enablePostgresql:
-          #           enum:
-          #           - true
-          #         postgresql_version:
-          #           title: PostgreSQL Version
-          #           type: string
-          #           enum:
-          #             - 11.14.0-debian-10-r17
-          #             - 14.2.0-debian-10-r58
-          #           enumNames:
-          #             - "11.14.0-debian-10-r17"
-          #             - "14.2.0-debian-10-r58"
-          #           default: 14.2.0-debian-10-r58
+          default: "no"
+          dependencies:
+            enablePostgres:
+              oneOf:
+              - properties:
+                  enablePostgresql:
+                    enum:
+                    - "no"
+              - properties:
+                  enablePostgresql:
+                    enum:
+                    - "yes"
+                  postgresql_version:
+                    title: PostgreSQL Version
+                    type: string
+                    enum:
+                      - 11.14.0-debian-10-r17
+                      - 14.2.0-debian-10-r58
+                    enumNames:
+                      - "11.14.0-debian-10-r17"
+                      - "14.2.0-debian-10-r58"
+                    default: 14.2.0-debian-10-r58
 
           #         postgresqlPersistenceSize:
           #           title: PostgreSQL persistence Size
