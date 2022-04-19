@@ -89,7 +89,7 @@ spec:
       annotations:
         kubernetes.io/ingress.class: ${{ values.k8s_ingress_class | dump }}
       hosts:
-      {%- if values.k8s_ingress_class == internal-ingress %}
+      {%- if values.k8s_ingress_class == "internal-ingress" %}
       {% for item in values.k8s_ingress_class %}
         - ${{ item }}.internal.winevinhos.info
       {% endfor %}
@@ -98,6 +98,8 @@ spec:
         - ${{ item }}.winevinhos.info
       {% endfor %}
       {%- endif %}
+
+      ${{ values.k8s_ingress_class }}
       
       paths:
         '/': {}
@@ -118,6 +120,9 @@ spec:
       {% else %}
       isInternal: false
       {%- endif %}
+
+      ${{values.k8s_ingress_clas}}
+
       hosts:
       {%- if values.k8s_ingress_class == "internal-ingress" %}
       {% for item in values.k8s_ingress_class %}
@@ -131,31 +136,28 @@ spec:
 
 
     productionDeployment:
-
-
     {%- if values.imageAutomation == true %} #TODO
       image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version # {"$imagepolicy": "flux-system:${{values.component_id}}"}
-    {% else %}
+    {%- else %}
       image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version
     {%- endif %}
-
       weight: 100
     {%- if values.envs %}
       env:
-      {% for item in values.envs %}
+      {%- for item in values.envs %}
         ${{ item["envName"] }}: ${{ item["envValue"] | dump}}
-      {% endfor %}
+      {%- endfor %}
     {% else %}
       env: {}
     {%- endif %}
 
     {%- if values.secrets %}
       secrets:
-        {{ parameters.component_id }}-secret:
-        {% for item in values.secrets %}
-          ${{ item["secretName"] }}: ${{ item["secretValue"] | dump}}
-        {% endfor %}
-    {% else %}
+        ${{ values.component_id }}-secret:
+        {%- for item in values.secrets %}
+          ${{ item["secretName"] }}: ${{ item["secretName"] }} #TODO create secret
+        {%- endfor %}
+    {%- else %}
       secrets: {}
     {%- endif %}
 
@@ -172,11 +174,14 @@ spec:
 
       #########
       ## DATABASES
-      ######
+      ######]
+
+      ${{values.enablePostgreSQL}}
+    
     {%- if values.enablePostgreSQL == "yes" %} #TODO
       postgresql:
         enabled: true
-        fullnameOverride: "{{ parameters.component_id }}-postgresql"
+        fullnameOverride: "${{ values.component_id }}-postgresql"
         image:
           registry: docker.io
           repository: bitnami/postgresql
