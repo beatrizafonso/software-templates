@@ -245,15 +245,12 @@ spec:
                 - k8s_ingress_class
 
     - title: Dependencies
-      required:
-        - PostgreSQL
-        - Redis
       properties:
-      
+  
         PostgreSQL:
           type: object
           required:
-          - PostgreSQL
+          - enablePostgreSQL
           properties:
             enablePostgreSQL:
               title: Enable Postgresql?
@@ -263,14 +260,14 @@ spec:
                 - "no"
               default: "no"
           dependencies:
-            enablePostgresql:
+            enablePostgreSQL:
               oneOf:
               - properties:
-                  enablePostgresql:
+                  enablePostgreSQL:
                     enum:
                     - "no"
               - properties:
-                  enablePostgresql:
+                  enablePostgreSQL:
                     enum:
                     - "yes"
                   postgresql_version:
@@ -333,7 +330,7 @@ spec:
         Redis:
           type: object
           required:
-          - Redis
+          - enableRedis
           properties:
             enableRedis:
               title: Enable Redis?

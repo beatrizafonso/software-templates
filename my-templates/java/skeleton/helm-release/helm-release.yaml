@@ -104,10 +104,22 @@ spec:
       #      - chart-example.local
 
     gateway:
-      enabled: ${{ values.ingress_conditional }} 
+      {%- if values.ingress_conditional == "no" %}
+      enabled: false
+      enabled:  {%- "true" if values.ingress_conditional == "yes" else "false" %}
+      {% else %}
+      enabled: true
+      enabled:  {%- "true" if values.ingress_conditional == "yes" else "false" %}
+      {%- endif %}
+      {%- if values.k8s_ingress_class == "internal-ingress" %}
       isInternal: true
+      isInternal: {%- "true" if values.k8s_ingress_class == "internal-ingress" else "false" %}
+      {% else %}
+      isInternal: false
+      isInternal: {%- "true" if values.k8s_ingress_class == "internal-ingress" else "false" %}
+      {%- endif %}
       hosts:
-      {%- if values.k8s_ingress_class == internal-ingress %}
+      {%- if values.k8s_ingress_class == "internal-ingress" %}
       {% for item in values.k8s_ingress_class %}
         - ${{ item }}.mesh.internal.winevinhos.info
       {% endfor %}
@@ -161,9 +173,9 @@ spec:
       #########
       ## DATABASES
       ######
-    {%- if values.enablePostgresql == true %} #TODO
+    {%- if values.enablePostgreSQL == "yes" %} #TODO
       postgresql:
-        enabled:  ${{ values.enablePostgresql }} 
+        enabled: true
         fullnameOverride: "{{ parameters.component_id }}-postgresql"
         image:
           registry: docker.io
@@ -179,7 +191,7 @@ spec:
           enablePostgresUser: ${{ values.enablePostgresqlUser }}
           ## @param auth.database Name for a custom database to create
           ##
-          {%- if values.postgresCustomDatabase %}
+          {%- if values.postgresCustomDatabase %} #TODO
           database: ${{ values.postgresCustomDatabase }}
           {%- endif %}
           ## @param auth.existingSecret Name of existing secret to use for PostgreSQL credentials
@@ -192,13 +204,13 @@ spec:
           ## The value is evaluated as a template.
           ##
           {%- if values.postgresSecret %}
-          existingSecret: {{ parameters.component_id }}-postgresql-secret #TODO create secret with {{ values.postgresPassword }} ; {{ values.postgresUsername }} ; {{ values.postgresCustomPassword }}
+          existingSecret: ${{ values.component_id }}-postgresql-secret #TODO create secret with {{ values.postgresPassword }} ; {{ values.postgresUsername }} ; {{ values.postgresCustomPassword }}
           {%- endif %}
         ## @param architecture PostgreSQL architecture (`standalone` or `replication`)
         ##
         primary:
           persistence:
-            size: {{ parameters.postgresqlPersistenceSize }} 
+            size: ${{ values.postgresqlPersistenceSize }} 
           tolerations:
             - key: "preemptible"
               operator: "Equal"
@@ -218,9 +230,9 @@ spec:
 
 
 
-    {%- if values.enableRedis == true %}    ## talvez nao precise desse "== true"
+    {%- if values.enableRedis == "yes" %}    ## talvez nao precise desse "== true"
       redis:
-        enable: ${{ values.enableRedis }}
+        enable: true
         image:
           registry: docker.io
           repository: bitnami/redis
@@ -229,7 +241,7 @@ spec:
           pullSecrets:
             - docker-registry
             - ci-cd-registry
-      {%- if values.enableRedisAuth == true %}
+      {%- if values.enableRedisAuth == "yes" %}
         auth:
           ## @param auth.enabled Enable password authentication
           ##
@@ -240,7 +252,7 @@ spec:
           ## @param auth.existingSecret The name of an existing secret with Redis&trade; credentials
           ## NOTE: When it's set, the previous `auth.password` parameter is ignored
           ##
-          existingSecret: {{ parameters.component_id }}-redis-secret #TODO create secret (como criar o secret?)
+          existingSecret: ${{ values.component_id }}-redis-secret #TODO create secret (como criar o secret?)
       {% else %}
         auth:
           enabled: false
