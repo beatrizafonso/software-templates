@@ -249,6 +249,7 @@ spec:
         - PostgreSQL
         - Redis
       properties:
+      
         PostgreSQL:
           type: object
           required:
@@ -328,7 +329,6 @@ spec:
                               description: secret to use for PostgreSQL credentials 
                           required:
                           - postgresSecret
-
 
         Redis:
           type: object
@@ -454,59 +454,13 @@ spec:
           enableRedisAuth: ${{ parameters.enableRedisAuth }}
           RedisSecret: ${{ parameters.RedisSecret }}
 
-    - id: publishrepo
-      name: Publish New Git Repository
-      action: publish:github
-      input:
-        sourcePath: 'main'
-        allowedHosts:
-          - github.com
-        description: This is ${{ parameters.name }}
-        repoUrl: ${{ parameters.repoUrl }}
-
-    - id: createstaging
-      name: Creating staging Branch
+    - id: publish-pull-request-test-hr
+      name: Publish Pull Request
       action: publish:github:pull-request
       input:
-        sourcePath: 'staging'
-        owner: ${{ parameters.owner }}
-        repoUrl: ${{ parameters.repoUrl }}
-        title: 'Creating staging branch'
-        branchName: 'staging'
-        description: |
-          # Staging environment created. 
-          Please, close this Pull Request
-
-    - id: cloneMain-tf
-      name: Clone main.tf file
-      action: winecombr:clone:github
-      input:
-        allowedHosts:
-          - github.com
-        description: This is ${{ parameters.name }}
-        repoUrl: github.com?owner=winecombr&repo=devops
-        repoPath: 'terraform/ci-gcp/main.tf'
-
-    - id: fetch-trigger
-      name: Fetch Trigger
-      action: fetch:template
-      input:
-        url: ./trigger
-        values:
-          owner: 'beatrizafonso'
-          destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-          repo_name: ${{ getRepositoryName parameters.repoUrl }}
-
-    - id: publish-pull-request-main-tf
-      name: Publish Pull Request main.tf
-      action: winecombr:github:pull-request
-      input:
-        repoName: ${{ parameters.repo_name }}
-        targetPath: 'terraform/ci-gcp'
-        sourcePath: 'terraform/ci-gcp'
-        clonedRepoPath: 'terraform/ci-gcp/main.tf'
-        owner: 'beatrizafonso'
-        repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+        targetPath: 'packages'
+        sourcePath: 'helm-release'
+        repoUrl: 'github.com?owner=beatrizafonso&repo=backstage-demo'
         title: 'Create new trigger: ${{ parameters.repo_name }}'
         branchName: 'create-trigger-${{ parameters.repo_name }}'
         description: |
@@ -516,12 +470,74 @@ spec:
           ${{ parameters.shortDescription }}
           {{/if}}
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publishrepo.output.repoContentsUrl }}$
-        catalogInfoPath: '/catalog-info.yaml'
+    # - id: publishrepo
+    #   name: Publish New Git Repository
+    #   action: publish:github
+    #   input:
+    #     sourcePath: 'main'
+    #     allowedHosts:
+    #       - github.com
+    #     description: This is ${{ parameters.name }}
+    #     repoUrl: ${{ parameters.repoUrl }}
+
+    # - id: createstaging
+    #   name: Creating staging Branch
+    #   action: publish:github:pull-request
+    #   input:
+    #     sourcePath: 'staging'
+    #     owner: ${{ parameters.owner }}
+    #     repoUrl: ${{ parameters.repoUrl }}
+    #     title: 'Creating staging branch'
+    #     branchName: 'staging'
+    #     description: |
+    #       Staging environment created. 
+    #       Please, close this Pull Request
+
+    # - id: cloneMain-tf
+    #   name: Clone main.tf file
+    #   action: winecombr:clone:github
+    #   input:
+    #     allowedHosts:
+    #       - github.com
+    #     description: This is ${{ parameters.name }}
+    #     repoUrl: github.com?owner=winecombr&repo=devops
+    #     repoPath: 'terraform/ci-gcp/main.tf'
+
+    # - id: fetch-trigger
+    #   name: Fetch Trigger
+    #   action: fetch:template
+    #   input:
+    #     url: ./trigger
+    #     values:
+    #       owner: 'beatrizafonso'
+    #       destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+    #       repo_name: ${{ getRepositoryName parameters.repoUrl }}
+
+    # - id: publish-pull-request-main-tf
+    #   name: Publish Pull Request main.tf
+    #   action: winecombr:github:pull-request
+    #   input:
+    #     repoName: ${{ parameters.repo_name }}
+    #     targetPath: 'terraform/ci-gcp'
+    #     sourcePath: 'terraform/ci-gcp'
+    #     clonedRepoPath: 'terraform/ci-gcp/main.tf'
+    #     owner: 'beatrizafonso'
+    #     repoUrl: 'github.com?owner=beatrizafonso&repo=fluxMigration'
+    #     title: 'Create new trigger: ${{ parameters.repo_name }}'
+    #     branchName: 'create-trigger-${{ parameters.repo_name }}'
+    #     description: |
+    #       New trigger: ${{ parameters.repo-name }}
+
+    #       {{#if parameters.shortDescription}}
+    #       ${{ parameters.shortDescription }}
+    #       {{/if}}
+
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps.publishrepo.output.repoContentsUrl }}$
+    #     catalogInfoPath: '/catalog-info.yaml'
 
   output:
     links:
