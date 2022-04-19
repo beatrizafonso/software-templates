@@ -441,10 +441,10 @@ spec:
           k8s_ingress_host: ${{ parameters.ingress.k8s_ingress_host }}
           k8s_ingress_class: ${{ parameters.ingress.k8s_ingress_class }}
           enablePostgreSQL: ${{ parameters.PostgreSQL.enablePostgreSQL }}
-          postgresql_version: ${{ parameters.PostgreSQL.enablePostgreSQL.postgresql_version }}
-          postgresqlPersistenceSize: ${{ parameters.PostgreSQL.enablePostgreSQL.postgresqlPersistenceSize }}
-          enablePostgresqlUser: ${{ parameters.PostgreSQL.enablePostgreSQL.PostgresqlUser.enablePostgresqlUser }}
-          postgresSecret: ${{ parameters.PostgreSQL.enablePostgreSQL.PostgresqlUser.enablePostgresqlUser.postgresSecret }}
+          postgresql_version: ${{ parameters.PostgreSQL.postgresql_version }}
+          postgresqlPersistenceSize: ${{ parameters.PostgreSQL.postgresqlPersistenceSize }}
+          enablePostgresqlUser: ${{ parameters.PostgreSQL.PostgresqlUser.enablePostgresqlUser }}
+          postgresSecret: ${{ parameters.PostgreSQL.PostgresqlUser.enablePostgresqlUser.postgresSecret }}
           enableRedis: ${{ parameters.Redis.enableRedis }}
           redis_version: ${{ parameters.Redis.enableRedis.redis_version }}
           redisPersistenceSize: ${{ parameters.Redis.enableRedis.redisPersistenceSize }}
