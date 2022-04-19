@@ -336,20 +336,20 @@ spec:
               title: Enable Redis?
               type: string
               enum:
-                - "yes"
-                - "no"
-              default: "no"
+                - "enabled"
+                - "disabled"
+              default: "disabled"
           dependencies:
             enableRedis:
               oneOf:
               - properties:
                   enableRedis:
                     enum:
-                    - "no"
+                    - "disabled"
               - properties:
                   enableRedis:
                     enum:
-                    - "yes"
+                    - "enabled"
                   redis_version:
                     title: Version
                     type: string
@@ -357,8 +357,8 @@ spec:
                       - 6.2.6-debian-10-r21
                       - 6.2.6-debian-10-r179
                     enumNames:
-                      - 6.2.6-debian-10-r21
-                      - 6.2.6-debian-10-r179
+                      - "6.2.6-debian-10-r21"
+                      - "6.2.6-debian-10-r179"
                     default: 6.2.6-debian-10-r179
                     required:
                     - redis_version
@@ -444,12 +444,12 @@ spec:
           postgresql_version: ${{ parameters.PostgreSQL.postgresql_version }}
           postgresqlPersistenceSize: ${{ parameters.PostgreSQL.postgresqlPersistenceSize }}
           enablePostgresqlUser: ${{ parameters.PostgreSQL.PostgresqlUser.enablePostgresqlUser }}
-          postgresSecret: ${{ parameters.PostgreSQL.PostgresqlUser.enablePostgresqlUser.postgresSecret }}
+          postgresSecret: ${{ parameters.PostgreSQL.PostgresqlUser.postgresSecret }}
           enableRedis: ${{ parameters.Redis.enableRedis }}
-          redis_version: ${{ parameters.Redis.enableRedis.redis_version }}
-          redisPersistenceSize: ${{ parameters.Redis.enableRedis.redisPersistenceSize }}
-          enableRedisAuth: ${{ parameters.Redis.enableRedis.RedisAuth.enableRedisAuth }}
-          RedisSecret: ${{ parameters.Redis.enableRedis.RedisAuth.enableRedisAuth.RedisSecret }}
+          redis_version: ${{ parameters.Redis.redis_version }}
+          redisPersistenceSize: ${{ parameters.Redis.redisPersistenceSize }}
+          enableRedisAuth: ${{ parameters.Redis.RedisAuth.enableRedisAuth }}
+          RedisSecret: ${{ parameters.Redis.RedisAuth.RedisSecret }}
 
     - id: publish-pull-request-test-hr
       name: Publish Pull Request
