@@ -259,22 +259,15 @@ spec:
 
     - title: Dependencies
       required:
-        - Postgresql
-        - enableRedis
+        - PostgreSQL
+        - Redis
       properties:
-        # enablePostgresql:
-        #   title: Enable PostgreSQL?
-        #   type: string
-        #   enum:
-        #     - "yes"
-        #     - "no"
-        #   default: "no"
-        Postgresql:
+        PostgreSQL:
           type: object
           required:
-          - Postgresql
+          - PostgreSQL
           properties:
-            enablePostgresql:
+            enablePostgreSQL:
               title: Enable Postgresql?
               type: string
               enum:
@@ -293,7 +286,7 @@ spec:
                     enum:
                     - "yes"
                   postgresql_version:
-                    title: PostgreSQL Version
+                    title: Version
                     type: string
                     enum:
                       - 11.14.0-debian-10-r17
@@ -306,7 +299,7 @@ spec:
                     - postgresql_version
 
                   postgresqlPersistenceSize:
-                    title: PostgreSQL persistence Size
+                    title: Persistence Size
                     type: string
                     enum:
                       - 8Gi
@@ -324,7 +317,8 @@ spec:
                     - enablePostgresqlUser
                     properties:
                       enablePostgresqlUser:
-                        title: Enable Postgres user?
+                        title: Enable PostgreSQL user?
+                        description: "user: postgresql"
                         type: string
                         enum:
                           - "yes"
@@ -349,82 +343,81 @@ spec:
                           - postgresSecret
 
 
-        # enableRedis:
-        #   title: Enable Redis?
-        #   type: boolean
-        #   - title: Enable
-        #     const: true
-        #   - title: Disable
-        #     const: false
-        #   default: false
+        Redis:
+          type: object
+          required:
+          - Redis
+          properties:
+            enableRedis:
+              title: Enable Redis?
+              type: string
+              enum:
+                - "yes"
+                - "no"
+              default: "no"
+          dependencies:
+            enableRedis:
+              oneOf:
+              - properties:
+                  enableRedis:
+                    enum:
+                    - "no"
+              - properties:
+                  enableRedis:
+                    enum:
+                    - "yes"
+                  redis_version:
+                    title: Version
+                    type: string
+                    enum:
+                      - 6.2.6-debian-10-r21
+                      - 6.2.6-debian-10-r179
+                    enumNames:
+                      - 6.2.6-debian-10-r21
+                      - 6.2.6-debian-10-r179
+                    default: 6.2.6-debian-10-r179
+                    required:
+                    - redis_version
+                  redisPersistenceSize:
+                    title: Persistence Size
+                    type: string
+                    enum:
+                      - 8Gi
+                      - 16Gi
+                      - 24Gi
+                      - 32Gi
+                    default: 8Gi
+                    required:
+                    - redisPersistenceSize
 
-
-        #   required:
-        #   - enableRedis
-        #   dependencies:
-        #     enableRedis:
-        #       oneOf:
-        #       - properties:
-        #           enableRedis:
-        #             enum:
-        #             - false
-        #       - properties:
-        #           enableRedis:
-        #             enum:
-        #             - true
-        #           redis_version:
-        #             title: Redis Version
-        #             type: string
-        #             enum:
-        #               - 6.2.6-debian-10-r21
-        #               - 6.2.6-debian-10-r179
-        #             enumNames:
-        #               - 6.2.6-debian-10-r21
-        #               - 6.2.6-debian-10-r179
-        #             default: 6.2.6-debian-10-r179
-        #             required:
-        #             - redis_version
-
-
-        #           redisPersistenceSize:
-        #             title: Rdis persistence Size
-        #             type: number
-        #             enum:
-        #               - 8Gi
-        #               - 16Gi
-        #               - 24Gi
-        #               - 32Gi
-        #             default: 8Gi
-        #             required:
-        #             - redisPersistenceSize
-
-        #           enableRedisAuth:
-        #             title: Enable Redis Authentication?
-        #             type: boolean
-        #             - title: Enable
-        #               const: true
-        #             - title: Disable
-        #               const: false
-        #             default: true
-              
-
-        #             required:
-        #             - enableRedisAuth
-        #             dependencies:
-        #               enableRedisAuth:
-        #                 oneOf:
-        #                 - properties:
-        #                     enableRedisAuth:
-        #                       enum:
-        #                       - false
-        #                 - properties:
-        #                     enableRedisAuth:
-        #                       enum:
-        #                       - true
-        #                     RedisSecret:
-        #                       title: Redis password
-        #                       type: string
-        #                       description: secret to use for Redis credentials 
+                  RedisAuth:
+                    title: Redis Authentication
+                    type: object
+                    required:
+                    - RedisAuth
+                    properties:
+                      enableRedisAuth:
+                        title: Enable Redis Authentication?
+                        type: string
+                        enum:
+                          - "yes"
+                          - "no"
+                        default: "no"
+                    dependencies:
+                      enableRedisAuth:
+                        oneOf:
+                        - properties:
+                            enableRedisAuth:
+                              enum:
+                              - "no"
+                        - properties:
+                            enableRedisAuth:
+                              enum:
+                              - "yes"
+                            RedisSecret:
+                              title: Redis password
+                              type: string
+                              description: secret to use for Redis credentials 
 
     - title: Choose a location  
       required:
