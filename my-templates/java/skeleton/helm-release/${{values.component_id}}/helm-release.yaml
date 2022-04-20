@@ -87,13 +87,23 @@ spec:
         kubernetes.io/ingress.class: ${{ values.k8s_ingress_class | dump }}
       hosts:
       {%- if values.k8s_ingress_class == "internal-ingress" %}
-      {% for item in values.k8s_ingress_class %}
+        {%- if values.ingress_conditional == "one" %}
+        - ${{ values.k8s_ingress_host }}.internal.winevinhos.info
+        {% endif %}
+        {%- if values.ingress_conditional == "multiple" %}
+        {% for item in values.k8s_ingress_host %}
         - ${{ item }}.internal.winevinhos.info
-      {% endfor %}
+        {% endfor %}
+        {% endif %}
       {% else %}
-      {% for item in values.k8s_ingress_class %}
+        {%- if values.ingress_conditional == "one" %}
+        - ${{ values.k8s_ingress_host }}.winevinhos.info
+        {% endif %}
+        {%- if values.ingress_conditional == "multiple" %}
+        {% for item in values.k8s_ingress_host %}
         - ${{ item }}.winevinhos.info
-      {% endfor %}
+        {% endfor %}
+        {% endif %}
       {%- endif %}
       paths:
         '/': {}
@@ -115,13 +125,23 @@ spec:
       {%- endif %}
       hosts:
       {%- if values.k8s_ingress_class == "internal-ingress" %}
-      {%- for item in values.k8s_ingress_host %}
-        - ${{ item }}.mesh.internal.winevinhos.info
-      {%- endfor %}
-      {%- else %}
-      {% for item in values.k8s_ingress_host %}
-        - ${{ item }}.mesh.winevinhos.info
-      {%- endfor %}
+        {%- if values.ingress_conditional == "one" %}
+        - ${{ values.k8s_ingress_host }}.internal.winevinhos.info
+        {% endif %}
+        {%- if values.ingress_conditional == "multiple" %}
+        {% for item in values.k8s_ingress_host %}
+        - ${{ item }}.internal.winevinhos.info
+        {% endfor %}
+        {% endif %}
+      {% else %}
+        {%- if values.ingress_conditional == "one" %}
+        - ${{ values.k8s_ingress_host }}.winevinhos.info
+        {% endif %}
+        {%- if values.ingress_conditional == "multiple" %}
+        {% for item in values.k8s_ingress_host %}
+        - ${{ item }}.winevinhos.info
+        {% endfor %}
+        {% endif %}
       {%- endif %}
     productionDeployment:
     {%- if values.imageAutomation == "Yes" %}

@@ -540,7 +540,7 @@ spec:
         sourcePath: 'terraform/ci-gcp'
         clonedRepoPath: 'terraform/ci-gcp/main.tf'
         owner: 'devops'
-        repoUrl: 'github.com?owner=devops&repo=winecombr'
+        repoUrl: 'github.com?owner=winecombr&repo=devops-charts'
         title: 'Create new trigger: ${{ parameters.repoApplicationName }}'
         branchName: 'winehub-create-trigger-${{ parameters.repoApplicationName }}'
         description: |
