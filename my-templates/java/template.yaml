@@ -177,6 +177,13 @@ spec:
             - Deployment
             - Statefulset
 
+        imageAutomation:
+          title: "Enable automated version update?"
+          type: string
+          default: "Yes"
+          enum:
+            - "Yes"
+            - "No"
 
         ingress:
           title: Ingress
@@ -450,6 +457,7 @@ spec:
           redisPersistenceSize: ${{ parameters.Redis.redisPersistenceSize }}
           enableRedisAuth: ${{ parameters.Redis.RedisAuth.enableRedisAuth }}
           RedisSecret: ${{ parameters.Redis.RedisAuth.RedisSecret }}
+          imageAutomation: ${{ parameters.imageAutomation }}
 
     # - id: publish-pull-request-test-hr
     #   name: Publish Pull Request
