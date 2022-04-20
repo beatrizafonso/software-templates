@@ -124,7 +124,7 @@ spec:
       {%- endfor %}
       {%- endif %}
     productionDeployment:
-    {%- if values.imageAutomation == true %} #TODO
+    {%- if values.imageAutomation == "Yes" %}
       image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version # {"$imagepolicy": "flux-system:${{values.component_id}}"}
     {%- else %}
       image: gcr.io/ci-cd-259817/winecombr/staging/${{values.component_id }}:version
@@ -161,7 +161,7 @@ spec:
       #########
       ## DATABASES
       ######]
-    {%- if values.enablePostgreSQL == "yes" %} #TODO
+    {%- if values.enablePostgreSQL == "yes" %}
       postgresql:
         enabled: true
         fullnameOverride: "${{ values.component_id }}-postgresql"
@@ -313,22 +313,3 @@ spec:
     # -----------------------------------------------------------------------------------------
     canaryDeployment:
       enabled: false
-
-
-
-
-
-
-          ${{values.ingress_conditional}}
-          ${{values.k8s_ingress_host}}
-          ${{values.k8s_ingress_class}}
-          ${{values.enablePostgreSQL}}
-          ${{values.postgresql_version}}
-          ${{values.postgresqlPersistenceSize}}
-          ${{values.enablePostgresqlUser}}
-          ${{values.postgresSecret}}
-          ${{values.enableRedis}}
-          ${{values.redis_version}}
-          ${{values.redisPersistenceSize}}
-          ${{values.enableRedisAuth}}
-          ${{values.RedisSecret}}
