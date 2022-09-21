@@ -345,6 +345,7 @@ spec:
               enum:
                 - "yes"
                 - "no"
+              #TODO só está aceitando "no"
               default: "no"
           dependencies:
             enableRedis:
@@ -439,7 +440,7 @@ spec:
           k8s_pod_replicas: ${{ parameters.k8s_pod_replicas }}
           k8s_svc_port: ${{ parameters.k8s_svc_port }}
           k8s_namespace: ${{ parameters.k8s_namespace }}
-          repoApplicationName: ${{ getRepositoryName parameters.repoUrl }}
+          repoApplicationName: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
           health_check: ${{ parameters.health_check }}
           envs: ${{ parameters.envs }}
           secrets: ${{ parameters.secrets }}
@@ -509,7 +510,9 @@ spec:
         branchName: 'winehub-create-hr-${{ parameters.repoApplicationName }}'
         description: |
           New Deployment: ${{ parameters.component_id }}
-          Repo Name: ${{ getRepositoryName parameters.repoUrl }}
+          Repo Name: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+
+        # a descrição nao está funcionando
 
     - id: cloneMain-tf
       name: Clone main.tf file
@@ -540,11 +543,30 @@ spec:
         sourcePath: 'terraform/ci-gcp'
         clonedRepoPath: 'terraform/ci-gcp/main.tf'
         owner: 'devops'
-        repoUrl: 'github.com?owner=winecombr&repo=devops-charts'
+        repoUrl: 'github.com?owner=winecombr&repo=devops'
         title: 'Create new trigger: ${{ parameters.repoApplicationName }}'
         branchName: 'winehub-create-trigger-${{ parameters.repoApplicationName }}'
         description: |
           New trigger: ${{ parameters.repoApplicationName }}
+
+          {%- if parameters.description %}
+          ${{ parameters.description }}
+          {%- endif %}
+
+    - id: publish-pull-request-main-tf
+      name: Publish Pull Request main.tf
+      action: winecombr:github:pull-request
+      input:
+        repoName: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+        targetPath: 'terraform/ci-gcp'
+        sourcePath: 'terraform/ci-gcp'
+        clonedRepoPath: 'terraform/ci-gcp/triggers/winecombr/devops-charts/main.tf'
+        owner: 'devops'
+        repoUrl: 'github.com?owner=winecombr&repo=devops-charts'
+        title: 'Create new trigger: ${{ (parameters.repoUrl | parseRepoUrl).repo }}'
+        branchName: 'winehub-create-trigger-${{ (parameters.repoUrl | parseRepoUrl).repo }}'
+        description: |
+          New trigger: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
 
           {%- if parameters.description %}
           ${{ parameters.description }}
