@@ -67,6 +67,7 @@ spec:
           title: Application Name
           type: string
           description: Application Name
+        #TODO analisar se realmente precisa desse campo, pq nao deixar o mesmo que "Component Name"
 
         lifecycle:
           title: Lifecycle
@@ -75,6 +76,9 @@ spec:
           enum:
             - production
             - staging
+          
+          #TODO pode gerar dupla interpretação, no inicio toda aplicação vai estar na fase de homologação...
+          # criar hrs para prd e hmg logo? 
         country:
           title: Country
           type: string
@@ -122,7 +126,12 @@ spec:
               envValue:
                 type: string
                 title: Env Value
-
+        
+        #TODO analisar se é melhor colocar a dockerfile como input 
+        dockerfile:
+          title: Application Dockerfile
+          description: A Dockerfile to build the application
+          type: string
 
         secrets:
           title: Secrets
@@ -467,8 +476,8 @@ spec:
     #     targetPath: 'packages'
     #     sourcePath: 'helm-release'
     #     repoUrl: 'github.com?owner=beatrizafonso&repo=backstage-demo'
-    #     title: 'Create new trigger: ${{ parameters.repoApplicationName }}'
-    #     branchName: 'create-trigger-${{ parameters.repoApplicationName }}'
+    #     title: 'Create new trigger: ${{ (parameters.repoUrl | parseRepoUrl).repo }}'
+    #     branchName: 'create-trigger-${{ (parameters.repoUrl | parseRepoUrl).repo }}'
     #     description: |
     #       # New trigger: ${{ parameters.repo-name }}
 
@@ -507,7 +516,7 @@ spec:
         sourcePath: 'helm-release'
         repoUrl: 'github.com?owner=winecombr&repo=devops'
         title: '[hmg-dev | ${{parameters.component_id}}] Add helm-release.yaml'
-        branchName: 'winehub-create-hr-${{ parameters.repoApplicationName }}'
+        branchName: 'winehub-create-hr-${{ (parameters.repoUrl | parseRepoUrl).repo }}'
         description: |
           New Deployment: ${{ parameters.component_id }}
           Repo Name: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
@@ -532,34 +541,35 @@ spec:
         values:
           # owner: 'beatrizafonso'
           # destination: 'github.com?owner=beatrizafonso&repo=fluxMigration'
-          repo_name: ${{ parameters.repoApplicationName }}
+          repo_name: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
 
-    - id: publish-pull-request-main-tf
-      name: Publish Pull Request main.tf
-      action: winecombr:github:pull-request
-      input:
-        repoName: ${{ parameters.repoApplicationName }}
-        targetPath: 'terraform/ci-gcp'
-        sourcePath: 'terraform/ci-gcp'
-        clonedRepoPath: 'terraform/ci-gcp/main.tf'
-        owner: 'devops'
-        repoUrl: 'github.com?owner=winecombr&repo=devops'
-        title: 'Create new trigger: ${{ parameters.repoApplicationName }}'
-        branchName: 'winehub-create-trigger-${{ parameters.repoApplicationName }}'
-        description: |
-          New trigger: ${{ parameters.repoApplicationName }}
-
-          {%- if parameters.description %}
-          ${{ parameters.description }}
-          {%- endif %}
-
-    - id: publish-pull-request-main-tf
-      name: Publish Pull Request main.tf
+    - id: publish-pull-request-repo-trigger
+      name: Publish Pull Request - Repo Trigger
       action: winecombr:github:pull-request
       input:
         repoName: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
         targetPath: 'terraform/ci-gcp'
         sourcePath: 'terraform/ci-gcp'
+        clonedRepoPath: 'terraform/ci-gcp/main.tf'
+        owner: 'devops'
+        repoUrl: 'github.com?owner=winecombr&repo=devops'
+        title: 'Create new trigger: ${{ (parameters.repoUrl | parseRepoUrl).repo }}'
+        branchName: 'winehub-create-trigger-${{ (parameters.repoUrl | parseRepoUrl).repo }}'
+        description: |
+          New trigger: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+
+          {%- if parameters.description %}
+          ${{ parameters.description }}
+          {%- endif %}
+
+    - id: publish-pull-request-chart-trigger
+      name: Publish Pull Request - Chart Trigger
+      action: winecombr:github:pull-request
+      input:
+        repoName: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+        targetPath: 'terraform/ci-gcp'
+        sourcePath: 'terraform/ci-gcp'
+        # nao sei se precisa desse targePath e desse sourcePath
         clonedRepoPath: 'terraform/ci-gcp/triggers/winecombr/devops-charts/main.tf'
         owner: 'devops'
         repoUrl: 'github.com?owner=winecombr&repo=devops-charts'
