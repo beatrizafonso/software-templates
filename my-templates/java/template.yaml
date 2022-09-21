@@ -126,12 +126,6 @@ spec:
               envValue:
                 type: string
                 title: Env Value
-        
-        #TODO analisar se é melhor colocar a dockerfile como input 
-        dockerfile:
-          title: Application Dockerfile
-          description: A Dockerfile to build the application
-          type: string
 
         secrets:
           title: Secrets
@@ -152,7 +146,7 @@ spec:
                 type: string
                 title: Secret Value
                 # ui:widget: password
-
+        
     - title: Kubernetes
       required:
         - k8s_namespace
@@ -419,6 +413,18 @@ spec:
                               title: Redis password
                               type: string
                               description: secret to use for Redis credentials 
+
+    # ########TODO analisar se é melhor colocar a dockerfile como input 
+    # ######## obs: tem como adicionar arquivos, olhar em https://rjsf-team.github.io/react-jsonschema-form/
+    # ######## talvez seja mais interessante trabalhar com arquivos pq o formato de string devolve uma única linha com "/n" para a separação de linhas
+    - title: Dockerfile
+      required: 
+        - Dockerfile
+      properties:
+        Dockerfile:
+          type: string
+          description: A Dockerfile to build the application
+          ui:widget: textarea
 
     - title: Choose a location  
       required:
